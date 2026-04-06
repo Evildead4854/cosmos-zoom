@@ -3,456 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Universal Scale | Journey Through Existence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cosmic Journey | From Earth to Infinity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: #000000;
+            margin: 0;
             overflow: hidden;
-            color: white;
+            font-family: 'Space Grotesk', sans-serif;
         }
-
-        /* Canvas background */
-        #bg-canvas {
+        
+        /* UI Layer */
+        #ui {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
-        }
-
-        /* Main UI Layer */
-        #ui-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20;
             pointer-events: none;
+            z-index: 100;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 40px 50px;
-            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.4) 100%);
+            padding: 30px 40px;
+            box-sizing: border-box;
         }
-
-        /* Top Info Panel */
-        .info-panel {
-            pointer-events: auto;
+        
+        .info-card {
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(20px);
-            background: rgba(10, 10, 20, 0.6);
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            border-radius: 24px;
-            padding: 24px 32px;
-            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px 30px;
+            max-width: 400px;
+            pointer-events: auto;
             transition: all 0.3s ease;
         }
-
-        .badge {
+        
+        .location-badge {
             font-size: 0.7rem;
             letter-spacing: 3px;
             text-transform: uppercase;
             color: #00f2ff;
-            margin-bottom: 12px;
-            font-weight: 300;
+            margin-bottom: 10px;
         }
-
-        .object-name {
-            font-size: 3.5rem;
+        
+        .location-name {
+            font-size: 2.2rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             background: linear-gradient(135deg, #fff, #00f2ff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
         }
-
-        .object-size {
-            font-size: 1.2rem;
+        
+        .distance {
+            font-size: 0.9rem;
             opacity: 0.7;
-            font-weight: 300;
+            font-family: monospace;
             letter-spacing: 1px;
         }
-
-        .size-scientific {
-            font-size: 0.9rem;
+        
+        .scale-info {
+            font-size: 0.8rem;
             opacity: 0.5;
             margin-top: 8px;
-            font-family: monospace;
         }
-
-        /* Scale Indicator */
-        .scale-indicator {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            pointer-events: auto;
-        }
-
-        .scale-bar {
-            width: 100%;
-            height: 3px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .scale-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00f2ff, #ff00ff);
-            width: 50%;
-            border-radius: 3px;
-            transition: width 0.1s linear;
-        }
-
-        .scale-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 0.7rem;
-            opacity: 0.5;
-            letter-spacing: 1px;
-        }
-
-        /* Scroll Hint */
-        .scroll-hint {
-            text-align: center;
-            pointer-events: auto;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.4;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.2; transform: translateY(0); }
-            50% { opacity: 0.6; transform: translateY(-5px); }
-        }
-
-        /* Bottom Controls */
+        
+        /* Controls */
         .controls {
             pointer-events: auto;
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-
+        
         .ctrl-btn {
-            background: rgba(20, 20, 30, 0.8);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 242, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 50px;
-            padding: 10px 20px;
+            padding: 12px 28px;
             color: white;
             font-size: 0.8rem;
+            font-family: inherit;
+            letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: inherit;
-            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-
+        
         .ctrl-btn:hover {
-            background: rgba(0, 242, 255, 0.2);
+            background: rgba(0, 242, 255, 0.3);
             border-color: #00f2ff;
             transform: scale(1.05);
         }
-
-        /* Object Styles */
-        .object-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-style: preserve-3d;
-            transition: transform 0.05s linear;
-            will-change: transform;
-        }
-
-        .visual-object {
-            position: relative;
-            border-radius: 50%;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .visual-object::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,242,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .visual-object:hover::before {
-            opacity: 1;
-        }
-
-        .object-label {
-            position: absolute;
-            bottom: -40px;
+        
+        .progress-container {
+            position: fixed;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            white-space: nowrap;
-            font-size: 0.8rem;
-            font-weight: 500;
+            width: 300px;
+            pointer-events: auto;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2ff, #ff00ff);
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.6rem;
+            opacity: 0.6;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            background: rgba(0,0,0,0.6);
-            padding: 4px 12px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        /* Particles */
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
+        
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 0.7rem;
+            opacity: 0.4;
+            letter-spacing: 2px;
             pointer-events: none;
+            animation: pulse 2s infinite;
         }
-
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+        }
+        
         @media (max-width: 768px) {
-            #ui-layer { padding: 20px; }
-            .info-panel { padding: 16px 20px; max-width: 90%; }
-            .object-name { font-size: 2rem; }
-            .scale-indicator { bottom: 80px; width: 250px; }
-            .scroll-hint { font-size: 0.6rem; }
+            #ui { padding: 20px; }
+            .info-card { padding: 12px 20px; max-width: 280px; }
+            .location-name { font-size: 1.3rem; }
+            .controls { gap: 8px; }
+            .ctrl-btn { padding: 8px 16px; font-size: 0.6rem; }
+            .progress-container { width: 250px; bottom: 20px; }
+            .scroll-hint { bottom: 15px; right: 15px; font-size: 0.5rem; }
         }
     </style>
 </head>
 <body>
-
-    <canvas id="bg-canvas"></canvas>
-
-    <div id="ui-layer">
-        <div class="info-panel">
-            <div class="badge">⟡ CURRENT VIEW ⟡</div>
-            <div class="object-name" id="objectName">Human</div>
-            <div class="object-size" id="objectSize">1.7 meters</div>
-            <div class="size-scientific" id="scientificNotation">10⁰ meters</div>
+    <div id="ui">
+        <div class="info-card">
+            <div class="location-badge">✦ CURRENT LOCATION ✦</div>
+            <div class="location-name" id="locationName">Earth</div>
+            <div class="distance" id="distance">You are here</div>
+            <div class="scale-info" id="scaleInfo">Scale: Human perspective</div>
         </div>
-
+        
         <div>
-            <div class="scale-indicator">
-                <div class="scale-bar" id="scaleBar">
-                    <div class="scale-fill" id="scaleFill"></div>
-                </div>
-                <div class="scale-labels">
-                    <span>⚛️ Quantum</span>
-                    <span>🌍 Human</span>
-                    <span>🌌 Cosmic</span>
-                </div>
-            </div>
             <div class="controls">
                 <button class="ctrl-btn" id="zoomOutBtn">⟵ ZOOM OUT</button>
                 <button class="ctrl-btn" id="zoomInBtn">ZOOM IN ⟶</button>
                 <button class="ctrl-btn" id="resetBtn">⟡ RESET</button>
             </div>
-            <div class="scroll-hint">✦ SCROLL TO TRAVEL THROUGH EXISTENCE ✦</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>🌍 Earth</span>
+                    <span>🌌 Galaxy</span>
+                    <span>🌀 Universe</span>
+                </div>
+            </div>
         </div>
     </div>
+    <div class="scroll-hint">✦ SCROLL TO EXPLORE THE COSMOS ✦</div>
 
-    <div id="stage"></div>
-
-    <script>
-        // Universe scale data - logarithmic exponents (10^x meters)
-        const scaleData = [
-            { name: "Planck Length", size: "1.6 × 10⁻³⁵ m", scientific: "10⁻³⁵ m", exp: -35, color: "#ff00ff", glow: "magenta" },
-            { name: "Quantum Foam", size: "10⁻³⁴ m", scientific: "10⁻³⁴ m", exp: -34, color: "#d400ff", glow: "purple" },
-            { name: "Neutrino", size: "10⁻²⁴ m", scientific: "10⁻²⁴ m", exp: -24, color: "#9b59b6", glow: "purple" },
-            { name: "Quark", size: "10⁻¹⁸ m", scientific: "10⁻¹⁸ m", exp: -18, color: "#8e44ad", glow: "purple" },
-            { name: "Proton", size: "1.7 × 10⁻¹⁵ m", scientific: "10⁻¹⁵ m", exp: -15, color: "#3498db", glow: "blue" },
-            { name: "Hydrogen Atom", size: "1.0 × 10⁻¹⁰ m", scientific: "10⁻¹⁰ m", exp: -10, color: "#2980b9", glow: "blue" },
-            { name: "DNA Molecule", size: "2 × 10⁻⁹ m", scientific: "10⁻⁹ m", exp: -9, color: "#1abc9c", glow: "cyan" },
-            { name: "Virus", size: "1 × 10⁻⁷ m", scientific: "10⁻⁷ m", exp: -7, color: "#2ecc71", glow: "green" },
-            { name: "Bacteria", size: "2 × 10⁻⁶ m", scientific: "10⁻⁶ m", exp: -6, color: "#27ae60", glow: "green" },
-            { name: "Red Blood Cell", size: "8 × 10⁻⁶ m", scientific: "10⁻⁵ m", exp: -5, color: "#e67e22", glow: "orange" },
-            { name: "Grain of Salt", size: "5 × 10⁻⁴ m", scientific: "10⁻⁴ m", exp: -4, color: "#f39c12", glow: "orange" },
-            { name: "Ant", size: "5 × 10⁻³ m", scientific: "10⁻³ m", exp: -3, color: "#f1c40f", glow: "yellow" },
-            { name: "Human", size: "1.7 m", scientific: "10⁰ m", exp: 0, color: "#00f2ff", glow: "cyan" },
-            { name: "Blue Whale", size: "30 m", scientific: "10¹·⁵ m", exp: 1.5, color: "#00d4ff", glow: "cyan" },
-            { name: "Boeing 747", size: "70 m", scientific: "10¹·⁸ m", exp: 1.8, color: "#0088ff", glow: "blue" },
-            { name: "Burj Khalifa", size: "828 m", scientific: "10²·⁹ m", exp: 2.9, color: "#0055ff", glow: "blue" },
-            { name: "Mount Everest", size: "8.8 km", scientific: "10³·⁹ m", exp: 3.9, color: "#4a90e2", glow: "blue" },
-            { name: "The Moon", size: "3,474 km", scientific: "10⁶·⁵ m", exp: 6.5, color: "#c0c0c0", glow: "white" },
-            { name: "Earth", size: "12,742 km", scientific: "10⁷·¹ m", exp: 7.1, color: "#2ecc71", glow: "green" },
-            { name: "Jupiter", size: "139,820 km", scientific: "10⁸·¹ m", exp: 8.1, color: "#d35400", glow: "orange" },
-            { name: "The Sun", size: "1.39 × 10⁶ km", scientific: "10⁹·¹ m", exp: 9.1, color: "#f39c12", glow: "yellow" },
-            { name: "Solar System", size: "2.87 × 10¹¹ km", scientific: "10¹²·⁴ m", exp: 12.4, color: "#ff6b35", glow: "orange" },
-            { name: "Light Year", size: "9.46 × 10¹² km", scientific: "10¹⁵·⁹ m", exp: 15.9, color: "#ff00ff", glow: "magenta" },
-            { name: "Orion Nebula", size: "24 light years", scientific: "10¹⁷·⁴ m", exp: 17.4, color: "#ff1493", glow: "pink" },
-            { name: "Milky Way", size: "100,000 ly", scientific: "10²¹ m", exp: 21, color: "#9400d3", glow: "purple" },
-            { name: "Local Group", size: "10 million ly", scientific: "10²³ m", exp: 23, color: "#4b0082", glow: "indigo" },
-            { name: "Virgo Supercluster", size: "110 million ly", scientific: "10²⁴ m", exp: 24, color: "#191970", glow: "navy" },
-            { name: "Observable Universe", size: "93 billion ly", scientific: "10²⁶·⁹ m", exp: 26.9, color: "#000033", glow: "darkblue" }
-        ];
-
-        const stage = document.getElementById('stage');
-        const bgCanvas = document.getElementById('bg-canvas');
-        const ctx = bgCanvas.getContext('2d');
-        
-        let currentExp = 0; // Start at Human scale
-        let targetExp = 0;
-        let objects = [];
-        let stars = [];
-        let animationFrame;
-
-        // Setup canvas
-        function resizeCanvas() {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-        }
-        
-        // Create starfield
-        function initStars() {
-            stars = [];
-            for (let i = 0; i < 300; i++) {
-                stars.push({
-                    x: Math.random() * bgCanvas.width,
-                    y: Math.random() * bgCanvas.height,
-                    radius: Math.random() * 2 + 1,
-                    alpha: Math.random() * 0.5 + 0.2,
-                    speed: Math.random() * 0.5 + 0.1
-                });
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
             }
         }
+    </script>
 
-        // Draw animated starfield
-        function drawStars() {
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-            
-            stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
-                ctx.fill();
-                
-                // Twinkle effect
-                star.alpha += (Math.random() - 0.5) * 0.02;
-                star.alpha = Math.min(0.8, Math.max(0.2, star.alpha));
-            });
+    <script type="module">
+        import * as THREE from 'three';
+        
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x010105);
+        scene.fog = new THREE.FogExp2(0x010105, 0.00001);
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000000000);
+        camera.position.set(0, 5, 15);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+        
+        // Controls state
+        let zoomLevel = 0; // 0 = Earth, 1 = Solar System, 2 = Galaxy, 3 = Universe
+        let targetZoom = 0;
+        let cameraDistance = 15;
+        
+        // Starfield background
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const starPositions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            starPositions[i*3] = (Math.random() - 0.5) * 20000;
+            starPositions[i*3+1] = (Math.random() - 0.5) * 20000;
+            starPositions[i*3+2] = (Math.random() - 0.5) * 5000 - 2000;
         }
-
-        // Create visual objects
-        scaleData.forEach((item, index) => {
-            const container = document.createElement('div');
-            container.className = 'object-container';
-            
-            const size = Math.max(30, Math.min(300, 150 + (item.exp * 2)));
-            
-            const visual = document.createElement('div');
-            visual.className = 'visual-object';
-            visual.style.width = `${size}px`;
-            visual.style.height = `${size}px`;
-            visual.style.background = `radial-gradient(circle, ${item.color}33, transparent)`;
-            visual.style.border = `2px solid ${item.color}`;
-            visual.style.boxShadow = `0 0 40px ${item.color}66`;
-            
-            const label = document.createElement('div');
-            label.className = 'object-label';
-            label.textContent = item.name;
-            
-            container.appendChild(visual);
-            container.appendChild(label);
-            stage.appendChild(container);
-            
-            objects.push({
-                element: container,
-                data: item,
-                baseSize: size
-            });
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, transparent: true, opacity: 0.6 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+        
+        // Earth with texture
+        const earthGeometry = new THREE.SphereGeometry(2, 128, 128);
+        const earthMaterial = new THREE.MeshStandardMaterial({
+            color: 0x2277ff,
+            emissive: 0x004466,
+            roughness: 0.5,
+            metalness: 0.1
         });
-
-        // Update all objects based on current scale
-        function updateScale() {
-            // Smooth interpolation
-            currentExp += (targetExp - currentExp) * 0.1;
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        scene.add(earth);
+        
+        // Atmosphere glow
+        const atmosphereGeometry = new THREE.SphereGeometry(2.05, 64, 64);
+        const atmosphereMaterial = new THREE.MeshPhongMaterial({
+            color: 0x44aaff,
+            transparent: true,
+            opacity: 0.15
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphere);
+        
+        // Clouds layer
+        const cloudGeometry = new THREE.SphereGeometry(2.02, 128, 128);
+        const cloudMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.1
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        scene.add(clouds);
+        
+        // Solar System objects (will be scaled and positioned based on zoom)
+        const planets = [];
+        const planetData = [
+            { name: "Mercury", color: 0xcc9966, size: 0.38, distance: 4.5, speed: 0.02 },
+            { name: "Venus", color: 0xffaa66, size: 0.95, distance: 6, speed: 0.015 },
+            { name: "Earth", color: 0x2277ff, size: 1, distance: 7.5, speed: 0.012 },
+            { name: "Mars", color: 0xff6633, size: 0.53, distance: 9, speed: 0.01 },
+            { name: "Jupiter", color: 0xdd8866, size: 1.8, distance: 14, speed: 0.007 },
+            { name: "Saturn", color: 0xeeddbb, size: 1.5, distance: 17, speed: 0.005 },
+            { name: "Uranus", color: 0x88ccff, size: 1.2, distance: 20, speed: 0.004 },
+            { name: "Neptune", color: 0x3366cc, size: 1.15, distance: 23, speed: 0.003 }
+        ];
+        
+        planetData.forEach((data, i) => {
+            const geometry = new THREE.SphereGeometry(data.size, 64, 64);
+            const material = new THREE.MeshStandardMaterial({ color: data.color, emissive: 0x111111 });
+            const planet = new THREE.Mesh(geometry, material);
+            planet.userData = { distance: data.distance, speed: data.speed, angle: Math.random() * Math.PI * 2, name: data.name };
+            scene.add(planet);
+            planets.push(planet);
             
-            objects.forEach(obj => {
-                const diff = obj.data.exp - currentExp;
-                const scale = Math.pow(2, -diff); // Logarithmic scaling
-                const opacity = 1 - Math.min(1, Math.abs(diff) / 4);
-                
-                if (opacity > 0.05 && scale > 0.01) {
-                    obj.element.style.display = 'block';
-                    obj.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
-                    obj.element.style.opacity = opacity;
-                    
-                    // Update active object info
-                    if (Math.abs(diff) < 0.3) {
-                        document.getElementById('objectName').textContent = obj.data.name;
-                        document.getElementById('objectSize').textContent = obj.data.size;
-                        document.getElementById('scientificNotation').textContent = obj.data.scientific;
-                        
-                        // Update body background glow
-                        document.body.style.backgroundColor = obj.data.color + '08';
-                    }
+            // Add orbit ring
+            const orbitPoints = [];
+            const orbitRadius = data.distance;
+            for (let i = 0; i <= 100; i++) {
+                const angle = (i / 100) * Math.PI * 2;
+                const x = Math.cos(angle) * orbitRadius;
+                const z = Math.sin(angle) * orbitRadius;
+                orbitPoints.push(new THREE.Vector3(x, 0, z));
+            }
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x336699, transparent: true, opacity: 0.3 });
+            const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
+            scene.add(orbit);
+        });
+        
+        // Saturn's rings
+        const ringGeometry = new THREE.TorusGeometry(2.2, 0.4, 32, 100);
+        const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xccaa88, emissive: 0x442200 });
+        const saturnRing = new THREE.Mesh(ringGeometry, ringMaterial);
+        saturnRing.rotation.x = Math.PI / 2;
+        scene.add(saturnRing);
+        
+        // Galaxy particles
+        const galaxyParticleCount = 5000;
+        const galaxyGeometry = new THREE.BufferGeometry();
+        const galaxyPositions = new Float32Array(galaxyParticleCount * 3);
+        const galaxyColors = new Float32Array(galaxyParticleCount * 3);
+        for (let i = 0; i < galaxyParticleCount; i++) {
+            const radius = Math.pow(Math.random(), 1.5) * 80;
+            const angle = Math.random() * Math.PI * 2;
+            const y = (Math.random() - 0.5) * 15;
+            galaxyPositions[i*3] = Math.cos(angle) * radius;
+            galaxyPositions[i*3+1] = y;
+            galaxyPositions[i*3+2] = Math.sin(angle) * radius;
+            
+            const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.1, 0.8, 0.5);
+            galaxyColors[i*3] = color.r;
+            galaxyColors[i*3+1] = color.g;
+            galaxyColors[i*3+2] = color.b;
+        }
+        galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(galaxyPositions, 3));
+        galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(galaxyColors, 3));
+        const galaxyMaterial = new THREE.PointsMaterial({ size: 0.3, vertexColors: true, transparent: true, opacity: 0.6 });
+        const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+        scene.add(galaxy);
+        
+        // Universe particles (distant galaxies)
+        const universeParticleCount = 8000;
+        const universeGeometry = new THREE.BufferGeometry();
+        const universePositions = new Float32Array(universeParticleCount * 3);
+        for (let i = 0; i < universeParticleCount; i++) {
+            universePositions[i*3] = (Math.random() - 0.5) * 2000;
+            universePositions[i*3+1] = (Math.random() - 0.5) * 1000;
+            universePositions[i*3+2] = (Math.random() - 0.5) * 1500 - 500;
+        }
+        universeGeometry.setAttribute('position', new THREE.BufferAttribute(universePositions, 3));
+        const universeMaterial = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.2, transparent: true, opacity: 0.4 });
+        const universeParticles = new THREE.Points(universeGeometry, universeMaterial);
+        scene.add(universeParticles);
+        
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x222222);
+        scene.add(ambientLight);
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+        sunLight.position.set(10, 20, 5);
+        scene.add(sunLight);
+        const backLight = new THREE.PointLight(0x4488ff, 0.3);
+        backLight.position.set(0, 0, -10);
+        scene.add(backLight);
+        
+        // Camera animation variables
+        let time = 0;
+        
+        // UI Elements
+        const locationNameEl = document.getElementById('locationName');
+        const distanceEl = document.getElementById('distance');
+        const scaleInfoEl = document.getElementById('scaleInfo');
+        const progressFill = document.getElementById('progressFill');
+        
+        // Zoom levels mapping
+        const zoomStages = [
+            { name: "Earth", distance: "You are here", scale: "Human perspective", cameraDist: 15, earthScale: 1, planetOpacity: 0, galaxyOpacity: 0, universeOpacity: 0 },
+            { name: "Solar System", distance: "~1 AU from Sun", scale: "Astronomical scale", cameraDist: 35, earthScale: 0.8, planetOpacity: 1, galaxyOpacity: 0, universeOpacity: 0 },
+            { name: "Milky Way Galaxy", distance: "~100,000 light-years across", scale: "Galactic scale", cameraDist: 120, earthScale: 0.3, planetOpacity: 0.3, galaxyOpacity: 1, universeOpacity: 0 },
+            { name: "Observable Universe", distance: "~93 billion light-years", scale: "Cosmic scale", cameraDist: 350, earthScale: 0.05, planetOpacity: 0, galaxyOpacity: 0.5, universeOpacity: 1 }
+        ];
+        
+        function updateZoom() {
+            // Smooth interpolation
+            zoomLevel += (targetZoom - zoomLevel) * 0.05;
+            const stage = Math.floor(zoomLevel);
+            const blend = zoomLevel - stage;
+            
+            const currentStage = zoomStages[Math.min(stage, zoomStages.length - 1)];
+            const nextStage = zoomStages[Math.min(stage + 1, zoomStages.length - 1)];
+            
+            if (currentStage) {
+                // Interpolate camera distance
+                if (nextStage) {
+                    cameraDistance = currentStage.cameraDist + (nextStage.cameraDist - currentStage.cameraDist) * blend;
                 } else {
-                    obj.element.style.display = 'none';
+                    cameraDistance = currentStage.cameraDist;
+                }
+                
+                // Update UI
+                if (blend < 0.5 || !nextStage) {
+                    locationNameEl.textContent = currentStage.name;
+                    distanceEl.textContent = currentStage.distance;
+                    scaleInfoEl.textContent = currentStage.scale;
+                } else {
+                    locationNameEl.textContent = nextStage.name;
+                    distanceEl.textContent = nextStage.distance;
+                    scaleInfoEl.textContent = nextStage.scale;
+                }
+            }
+            
+            // Update progress bar
+            const progress = zoomLevel / (zoomStages.length - 1);
+            progressFill.style.width = `${progress * 100}%`;
+            
+            // Animate camera
+            const targetPos = new THREE.Vector3(0, 2, cameraDistance);
+            camera.position.lerp(targetPos, 0.05);
+            camera.lookAt(0, 0, 0);
+            
+            // Scale Earth and atmosphere based on zoom
+            let earthScale = 1;
+            let planetOpacity = 0;
+            let galaxyOpacity = 0;
+            let universeOpacity = 0;
+            
+            if (zoomLevel < 1) {
+                earthScale = 1 - zoomLevel * 0.7;
+                planetOpacity = zoomLevel;
+                galaxyOpacity = 0;
+                universeOpacity = 0;
+            } else if (zoomLevel < 2) {
+                const t = (zoomLevel - 1);
+                earthScale = 0.3 - t * 0.25;
+                planetOpacity = 1 - t;
+                galaxyOpacity = t;
+                universeOpacity = 0;
+            } else {
+                const t = Math.min(1, zoomLevel - 2);
+                earthScale = 0.05 - t * 0.04;
+                planetOpacity = 0;
+                galaxyOpacity = 1 - t;
+                universeOpacity = t;
+            }
+            
+            earth.scale.setScalar(Math.max(0.01, earthScale));
+            atmosphere.scale.setScalar(Math.max(0.01, earthScale));
+            clouds.scale.setScalar(Math.max(0.01, earthScale));
+            
+            // Update planet visibility and scale
+            planets.forEach(planet => {
+                planet.scale.setScalar(earthScale);
+                if (planetOpacity > 0) {
+                    planet.material.opacity = Math.min(1, planetOpacity);
+                    planet.material.transparent = true;
                 }
             });
+            saturnRing.scale.setScalar(earthScale);
+            saturnRing.material.opacity = planetOpacity;
+            saturnRing.material.transparent = true;
             
-            // Update scale bar (map exponent range -35 to 27 to 0-100%)
-            const percent = ((currentExp + 35) / 62) * 100;
-            document.getElementById('scaleFill').style.width = `${Math.min(100, Math.max(0, percent))}%`;
-        }
-
-        // Zoom functions
-        function zoomIn() {
-            targetExp = Math.min(27, targetExp + 0.5);
-            updateScale();
+            // Update galaxy and universe opacity
+            galaxy.material.opacity = galaxyOpacity * 0.6;
+            universeParticles.material.opacity = universeOpacity * 0.4;
+            stars.material.opacity = 0.3 + zoomLevel * 0.2;
         }
         
+        // Update planet positions
+        function updatePlanets() {
+            planets.forEach((planet, i) => {
+                const data = planetData[i];
+                planet.userData.angle += data.speed * 0.5;
+                const x = Math.cos(planet.userData.angle) * data.distance;
+                const z = Math.sin(planet.userData.angle) * data.distance;
+                planet.position.set(x, 0, z);
+            });
+            // Saturn rings position
+            if (planets[5]) {
+                saturnRing.position.copy(planets[5].position);
+                saturnRing.rotation.z = time * 0.2;
+            }
+        }
+        
+        // Rotate galaxy
+        function updateGalaxy() {
+            galaxy.rotation.y += 0.002;
+            galaxy.rotation.x = Math.sin(time * 0.1) * 0.1;
+        }
+        
+        // Zoom controls
         function zoomOut() {
-            targetExp = Math.max(-35, targetExp - 0.5);
-            updateScale();
+            targetZoom = Math.min(zoomStages.length - 1, targetZoom + 0.15);
+        }
+        
+        function zoomIn() {
+            targetZoom = Math.max(0, targetZoom - 0.15);
         }
         
         function reset() {
-            targetExp = 0;
-            updateScale();
+            targetZoom = 0;
         }
-
-        // Animation loop
-        function animate() {
-            updateScale();
-            drawStars();
-            requestAnimationFrame(animate);
-        }
-
+        
         // Event listeners
+        document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+        document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+        
+        // Scroll wheel
         window.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.3 : 0.3;
-            targetExp = Math.max(-35, Math.min(27, targetExp + delta));
+            if (e.deltaY > 0) {
+                targetZoom = Math.min(zoomStages.length - 1, targetZoom + 0.05);
+            } else {
+                targetZoom = Math.max(0, targetZoom - 0.05);
+            }
         }, { passive: false });
-
+        
+        // Click on progress bar
+        const progressBar = document.getElementById('progressBar');
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percent = x / rect.width;
+            targetZoom = percent * (zoomStages.length - 1);
+        });
+        
         // Touch support
         let touchStartY = 0;
         window.addEventListener('touchstart', (e) => {
@@ -461,53 +525,43 @@
         
         window.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const delta = (touchStartY - e.touches[0].clientY) * 0.01;
-            targetExp = Math.max(-35, Math.min(27, targetExp + delta));
+            const delta = (touchStartY - e.touches[0].clientY) * 0.005;
+            targetZoom = Math.min(zoomStages.length - 1, Math.max(0, targetZoom + delta));
             touchStartY = e.touches[0].clientY;
         }, { passive: false });
-
-        document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
-        document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
-        document.getElementById('resetBtn').addEventListener('click', reset);
-
-        // Click on scale bar
-        const scaleBar = document.getElementById('scaleBar');
-        scaleBar.addEventListener('click', (e) => {
-            const rect = scaleBar.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const percent = x / rect.width;
-            targetExp = -35 + (percent * 62);
-        });
-
-        // Initialize
-        resizeCanvas();
-        initStars();
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            initStars();
-        });
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+            
+            updateZoom();
+            updatePlanets();
+            updateGalaxy();
+            
+            // Rotate Earth
+            earth.rotation.y += 0.005;
+            atmosphere.rotation.y += 0.003;
+            clouds.rotation.y += 0.007;
+            
+            // Rotate stars slowly
+            stars.rotation.y += 0.0005;
+            
+            renderer.render(scene, camera);
+        }
         
         animate();
         
-        // Add floating particles effect
-        setInterval(() => {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * window.innerWidth + 'px';
-            particle.style.top = Math.random() * window.innerHeight + 'px';
-            document.body.appendChild(particle);
-            
-            let opacity = 0.8;
-            const interval = setInterval(() => {
-                opacity -= 0.05;
-                particle.style.opacity = opacity;
-                particle.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
-                if (opacity <= 0) {
-                    clearInterval(interval);
-                    particle.remove();
-                }
-            }, 50);
-        }, 200);
+        // Handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Add some floating particles effect
+        console.log('🌌 Cosmic journey started | From Earth to Infinity');
     </script>
 </body>
 </html>
