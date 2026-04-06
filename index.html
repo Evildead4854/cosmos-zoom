@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Scaler | The Scale of the Universe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020202;
+            --accent: #00f2ff;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background-color: var(--bg); color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+        }
+        #ui-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 40px; box-sizing: border-box;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+        }
+        .info { pointer-events: auto; }
+        .title { font-size: 1.5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+        .data-readout { font-size: 3rem; font-weight: 700; margin-top: 10px; }
+        .unit { font-size: 1.2rem; opacity: 0.6; }
+
+        #stage {
+            width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            perspective: 1000px;
+        }
+        .object {
+            position: absolute;
+            display: flex; flex-direction: column; align-items: center;
+            transition: transform 0.1s linear, opacity 0.3s;
+        }
+        .circle {
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            background: rgba(0, 242, 255, 0.05);
+        }
+        .label { margin-top: 15px; font-weight: bold; text-align: center; white-space: nowrap; }
+
+        #scroll-hint {
+            font-size: 0.9rem; opacity: 0.5; letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <div class="info">
+            <div class="title">Universal Scaler</div>
+            <div id="object-name" class="data-readout">Human</div>
+            <div id="object-size" class="unit">1.7 Meters</div>
+        </div>
+        <div id="scroll-hint">SCROLL TO ZOOM IN/OUT</div>
+    </div>
+
+    <div id="stage"></div>
+
+    <script>
+        // Scaling is based on powers of 10. 0 = 1 meter (Human scale)
+        const data = [
+            { name: "Planck Length", size: "1.6 x 10^-35 m", exp: -35 },
+            { name: "Neutrino", size: "10^-24 m", exp: -24 },
+            { name: "Proton", size: "1.7 femtometers", exp: -15 },
+            { name: "Hydrogen Atom", size: "100 picometers", exp: -10 },
+            { name: "DNA Helix", size: "2 nanometers", exp: -9 },
+            { name: "Virus", size: "100 nanometers", exp: -7 },
+            { name: "Red Blood Cell", size: "8 micrometers", exp: -5 },
+            { name: "Human Hair", size: "100 micrometers", exp: -4 },
+            { name: "Ant", size: "5 millimeters", exp: -2.3 },
+            { name: "Human", size: "1.7 meters", exp: 0 },
+            { name: "Blue Whale", size: "30 meters", exp: 1.5 },
+            { name: "Boeing 747", size: "70 meters", exp: 1.8 },
+            { name: "Burj Khalifa", size: "828 meters", exp: 2.9 },
+            { name: "Mount Everest", size: "8.8 kilometers", exp: 3.9 },
+            { name: "The Moon", size: "3,474 kilometers", exp: 6.5 },
+            { name: "The Earth", size: "12,742 kilometers", exp: 7.1 },
+            { name: "The Sun", size: "1.39 million km", exp: 9.1 },
+            { name: "Solar System", size: "287 billion km", exp: 12.4 },
+            { name: "Light Year", size: "9.46 trillion km", exp: 15.9 },
+            { name: "Milky Way", size: "100,000 light years", exp: 21 },
+            { name: "Observable Universe", size: "93 billion light years", exp: 26.9 }
+        ];
+
+        const stage = document.getElementById('stage');
+        let currentExp = 0; // Start at Human scale (10^0 = 1)
+
+        // Create elements
+        data.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'object';
+            div.innerHTML = `
+                <div class="circle" style="width: 200px; height: 200px;"></div>
+                <div class="label">${item.name}</div>
+            `;
+            item.el = div;
+            stage.appendChild(div);
+        });
+
+        function update() {
+            data.forEach(item => {
+                const diff = item.exp - currentExp;
+                // Logarithmic scaling logic
+                const scale = Math.pow(10, diff);
+                const opacity = 1 - Math.abs(diff) / 3; // Fade out if far from current zoom
+
+                if (opacity > 0) {
+                    item.el.style.display = "flex";
+                    item.el.style.transform = `scale(${scale})`;
+                    item.el.style.opacity = opacity;
+                    
+                    if (Math.abs(diff) < 0.5) {
+                        document.getElementById('object-name').innerText = item.name;
+                        document.getElementById('object-size').innerText = item.size;
+                    }
+                } else {
+                    item.el.style.display = "none";
+                }
+            });
+        }
+
+        window.addEventListener('wheel', (e) => {
+            currentExp += e.deltaY * 0.005;
+            // Limit the zoom so they don't get lost in blackness
+            currentExp = Math.max(-36, Math.min(28, currentExp));
+            update();
+        });
+
+        // Touch support for mobile
+        let touchStart = 0;
+        window.addEventListener('touchstart', e => touchStart = e.touches[0].clientY);
+        window.addEventListener('touchmove', e => {
+            const touchEnd = e.touches[0].clientY;
+            currentExp += (touchStart - touchEnd) * 0.01;
+            currentExp = Math.max(-36, Math.min(28, currentExp));
+            touchStart = touchEnd;
+            update();
+        });
+
+        update();
+    </script>
+</body>
+</html>
