@@ -2,152 +2,512 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Scaler | The Scale of the Universe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Universal Scale | Journey Through Existence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #020202;
-            --accent: #00f2ff;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            background-color: var(--bg); color: white;
+
+        body {
             font-family: 'Space Grotesk', sans-serif;
+            background: #000000;
             overflow: hidden;
+            color: white;
         }
+
+        /* Canvas background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Main UI Layer */
         #ui-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 40px; box-sizing: border-box;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 50px;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.4) 100%);
         }
-        .info { pointer-events: auto; }
-        .title { font-size: 1.5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
-        .data-readout { font-size: 3rem; font-weight: 700; margin-top: 10px; }
-        .unit { font-size: 1.2rem; opacity: 0.6; }
 
-        #stage {
-            width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            perspective: 1000px;
+        /* Top Info Panel */
+        .info-panel {
+            pointer-events: auto;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 24px;
+            padding: 24px 32px;
+            max-width: 500px;
+            transition: all 0.3s ease;
         }
-        .object {
+
+        .badge {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #00f2ff;
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+
+        .object-name {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff, #00f2ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .object-size {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .size-scientific {
+            font-size: 0.9rem;
+            opacity: 0.5;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+
+        /* Scale Indicator */
+        .scale-indicator {
             position: absolute;
-            display: flex; flex-direction: column; align-items: center;
-            transition: transform 0.1s linear, opacity 0.3s;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            pointer-events: auto;
         }
-        .circle {
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
-            background: rgba(0, 242, 255, 0.05);
-        }
-        .label { margin-top: 15px; font-weight: bold; text-align: center; white-space: nowrap; }
 
-        #scroll-hint {
-            font-size: 0.9rem; opacity: 0.5; letter-spacing: 2px;
+        .scale-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .scale-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2ff, #ff00ff);
+            width: 50%;
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        /* Scroll Hint */
+        .scroll-hint {
+            text-align: center;
+            pointer-events: auto;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.4;
             animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; transform: translateY(0); }
+            50% { opacity: 0.6; transform: translateY(-5px); }
+        }
+
+        /* Bottom Controls */
+        .controls {
+            pointer-events: auto;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .ctrl-btn {
+            background: rgba(20, 20, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            letter-spacing: 1px;
+        }
+
+        .ctrl-btn:hover {
+            background: rgba(0, 242, 255, 0.2);
+            border-color: #00f2ff;
+            transform: scale(1.05);
+        }
+
+        /* Object Styles */
+        .object-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            transition: transform 0.05s linear;
+            will-change: transform;
+        }
+
+        .visual-object {
+            position: relative;
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .visual-object::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,242,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .visual-object:hover::before {
+            opacity: 1;
+        }
+
+        .object-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
+            padding: 4px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            #ui-layer { padding: 20px; }
+            .info-panel { padding: 16px 20px; max-width: 90%; }
+            .object-name { font-size: 2rem; }
+            .scale-indicator { bottom: 80px; width: 250px; }
+            .scroll-hint { font-size: 0.6rem; }
+        }
     </style>
 </head>
 <body>
 
+    <canvas id="bg-canvas"></canvas>
+
     <div id="ui-layer">
-        <div class="info">
-            <div class="title">Universal Scaler</div>
-            <div id="object-name" class="data-readout">Human</div>
-            <div id="object-size" class="unit">1.7 Meters</div>
+        <div class="info-panel">
+            <div class="badge">⟡ CURRENT VIEW ⟡</div>
+            <div class="object-name" id="objectName">Human</div>
+            <div class="object-size" id="objectSize">1.7 meters</div>
+            <div class="size-scientific" id="scientificNotation">10⁰ meters</div>
         </div>
-        <div id="scroll-hint">SCROLL TO ZOOM IN/OUT</div>
+
+        <div>
+            <div class="scale-indicator">
+                <div class="scale-bar" id="scaleBar">
+                    <div class="scale-fill" id="scaleFill"></div>
+                </div>
+                <div class="scale-labels">
+                    <span>⚛️ Quantum</span>
+                    <span>🌍 Human</span>
+                    <span>🌌 Cosmic</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="ctrl-btn" id="zoomOutBtn">⟵ ZOOM OUT</button>
+                <button class="ctrl-btn" id="zoomInBtn">ZOOM IN ⟶</button>
+                <button class="ctrl-btn" id="resetBtn">⟡ RESET</button>
+            </div>
+            <div class="scroll-hint">✦ SCROLL TO TRAVEL THROUGH EXISTENCE ✦</div>
+        </div>
     </div>
 
     <div id="stage"></div>
 
     <script>
-        // Scaling is based on powers of 10. 0 = 1 meter (Human scale)
-        const data = [
-            { name: "Planck Length", size: "1.6 x 10^-35 m", exp: -35 },
-            { name: "Neutrino", size: "10^-24 m", exp: -24 },
-            { name: "Proton", size: "1.7 femtometers", exp: -15 },
-            { name: "Hydrogen Atom", size: "100 picometers", exp: -10 },
-            { name: "DNA Helix", size: "2 nanometers", exp: -9 },
-            { name: "Virus", size: "100 nanometers", exp: -7 },
-            { name: "Red Blood Cell", size: "8 micrometers", exp: -5 },
-            { name: "Human Hair", size: "100 micrometers", exp: -4 },
-            { name: "Ant", size: "5 millimeters", exp: -2.3 },
-            { name: "Human", size: "1.7 meters", exp: 0 },
-            { name: "Blue Whale", size: "30 meters", exp: 1.5 },
-            { name: "Boeing 747", size: "70 meters", exp: 1.8 },
-            { name: "Burj Khalifa", size: "828 meters", exp: 2.9 },
-            { name: "Mount Everest", size: "8.8 kilometers", exp: 3.9 },
-            { name: "The Moon", size: "3,474 kilometers", exp: 6.5 },
-            { name: "The Earth", size: "12,742 kilometers", exp: 7.1 },
-            { name: "The Sun", size: "1.39 million km", exp: 9.1 },
-            { name: "Solar System", size: "287 billion km", exp: 12.4 },
-            { name: "Light Year", size: "9.46 trillion km", exp: 15.9 },
-            { name: "Milky Way", size: "100,000 light years", exp: 21 },
-            { name: "Observable Universe", size: "93 billion light years", exp: 26.9 }
+        // Universe scale data - logarithmic exponents (10^x meters)
+        const scaleData = [
+            { name: "Planck Length", size: "1.6 × 10⁻³⁵ m", scientific: "10⁻³⁵ m", exp: -35, color: "#ff00ff", glow: "magenta" },
+            { name: "Quantum Foam", size: "10⁻³⁴ m", scientific: "10⁻³⁴ m", exp: -34, color: "#d400ff", glow: "purple" },
+            { name: "Neutrino", size: "10⁻²⁴ m", scientific: "10⁻²⁴ m", exp: -24, color: "#9b59b6", glow: "purple" },
+            { name: "Quark", size: "10⁻¹⁸ m", scientific: "10⁻¹⁸ m", exp: -18, color: "#8e44ad", glow: "purple" },
+            { name: "Proton", size: "1.7 × 10⁻¹⁵ m", scientific: "10⁻¹⁵ m", exp: -15, color: "#3498db", glow: "blue" },
+            { name: "Hydrogen Atom", size: "1.0 × 10⁻¹⁰ m", scientific: "10⁻¹⁰ m", exp: -10, color: "#2980b9", glow: "blue" },
+            { name: "DNA Molecule", size: "2 × 10⁻⁹ m", scientific: "10⁻⁹ m", exp: -9, color: "#1abc9c", glow: "cyan" },
+            { name: "Virus", size: "1 × 10⁻⁷ m", scientific: "10⁻⁷ m", exp: -7, color: "#2ecc71", glow: "green" },
+            { name: "Bacteria", size: "2 × 10⁻⁶ m", scientific: "10⁻⁶ m", exp: -6, color: "#27ae60", glow: "green" },
+            { name: "Red Blood Cell", size: "8 × 10⁻⁶ m", scientific: "10⁻⁵ m", exp: -5, color: "#e67e22", glow: "orange" },
+            { name: "Grain of Salt", size: "5 × 10⁻⁴ m", scientific: "10⁻⁴ m", exp: -4, color: "#f39c12", glow: "orange" },
+            { name: "Ant", size: "5 × 10⁻³ m", scientific: "10⁻³ m", exp: -3, color: "#f1c40f", glow: "yellow" },
+            { name: "Human", size: "1.7 m", scientific: "10⁰ m", exp: 0, color: "#00f2ff", glow: "cyan" },
+            { name: "Blue Whale", size: "30 m", scientific: "10¹·⁵ m", exp: 1.5, color: "#00d4ff", glow: "cyan" },
+            { name: "Boeing 747", size: "70 m", scientific: "10¹·⁸ m", exp: 1.8, color: "#0088ff", glow: "blue" },
+            { name: "Burj Khalifa", size: "828 m", scientific: "10²·⁹ m", exp: 2.9, color: "#0055ff", glow: "blue" },
+            { name: "Mount Everest", size: "8.8 km", scientific: "10³·⁹ m", exp: 3.9, color: "#4a90e2", glow: "blue" },
+            { name: "The Moon", size: "3,474 km", scientific: "10⁶·⁵ m", exp: 6.5, color: "#c0c0c0", glow: "white" },
+            { name: "Earth", size: "12,742 km", scientific: "10⁷·¹ m", exp: 7.1, color: "#2ecc71", glow: "green" },
+            { name: "Jupiter", size: "139,820 km", scientific: "10⁸·¹ m", exp: 8.1, color: "#d35400", glow: "orange" },
+            { name: "The Sun", size: "1.39 × 10⁶ km", scientific: "10⁹·¹ m", exp: 9.1, color: "#f39c12", glow: "yellow" },
+            { name: "Solar System", size: "2.87 × 10¹¹ km", scientific: "10¹²·⁴ m", exp: 12.4, color: "#ff6b35", glow: "orange" },
+            { name: "Light Year", size: "9.46 × 10¹² km", scientific: "10¹⁵·⁹ m", exp: 15.9, color: "#ff00ff", glow: "magenta" },
+            { name: "Orion Nebula", size: "24 light years", scientific: "10¹⁷·⁴ m", exp: 17.4, color: "#ff1493", glow: "pink" },
+            { name: "Milky Way", size: "100,000 ly", scientific: "10²¹ m", exp: 21, color: "#9400d3", glow: "purple" },
+            { name: "Local Group", size: "10 million ly", scientific: "10²³ m", exp: 23, color: "#4b0082", glow: "indigo" },
+            { name: "Virgo Supercluster", size: "110 million ly", scientific: "10²⁴ m", exp: 24, color: "#191970", glow: "navy" },
+            { name: "Observable Universe", size: "93 billion ly", scientific: "10²⁶·⁹ m", exp: 26.9, color: "#000033", glow: "darkblue" }
         ];
 
         const stage = document.getElementById('stage');
-        let currentExp = 0; // Start at Human scale (10^0 = 1)
+        const bgCanvas = document.getElementById('bg-canvas');
+        const ctx = bgCanvas.getContext('2d');
+        
+        let currentExp = 0; // Start at Human scale
+        let targetExp = 0;
+        let objects = [];
+        let stars = [];
+        let animationFrame;
 
-        // Create elements
-        data.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = 'object';
-            div.innerHTML = `
-                <div class="circle" style="width: 200px; height: 200px;"></div>
-                <div class="label">${item.name}</div>
-            `;
-            item.el = div;
-            stage.appendChild(div);
-        });
+        // Setup canvas
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        
+        // Create starfield
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 300; i++) {
+                stars.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * bgCanvas.height,
+                    radius: Math.random() * 2 + 1,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    speed: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
 
-        function update() {
-            data.forEach(item => {
-                const diff = item.exp - currentExp;
-                // Logarithmic scaling logic
-                const scale = Math.pow(10, diff);
-                const opacity = 1 - Math.abs(diff) / 3; // Fade out if far from current zoom
-
-                if (opacity > 0) {
-                    item.el.style.display = "flex";
-                    item.el.style.transform = `scale(${scale})`;
-                    item.el.style.opacity = opacity;
-                    
-                    if (Math.abs(diff) < 0.5) {
-                        document.getElementById('object-name').innerText = item.name;
-                        document.getElementById('object-size').innerText = item.size;
-                    }
-                } else {
-                    item.el.style.display = "none";
-                }
+        // Draw animated starfield
+        function drawStars() {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+            
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.fill();
+                
+                // Twinkle effect
+                star.alpha += (Math.random() - 0.5) * 0.02;
+                star.alpha = Math.min(0.8, Math.max(0.2, star.alpha));
             });
         }
 
+        // Create visual objects
+        scaleData.forEach((item, index) => {
+            const container = document.createElement('div');
+            container.className = 'object-container';
+            
+            const size = Math.max(30, Math.min(300, 150 + (item.exp * 2)));
+            
+            const visual = document.createElement('div');
+            visual.className = 'visual-object';
+            visual.style.width = `${size}px`;
+            visual.style.height = `${size}px`;
+            visual.style.background = `radial-gradient(circle, ${item.color}33, transparent)`;
+            visual.style.border = `2px solid ${item.color}`;
+            visual.style.boxShadow = `0 0 40px ${item.color}66`;
+            
+            const label = document.createElement('div');
+            label.className = 'object-label';
+            label.textContent = item.name;
+            
+            container.appendChild(visual);
+            container.appendChild(label);
+            stage.appendChild(container);
+            
+            objects.push({
+                element: container,
+                data: item,
+                baseSize: size
+            });
+        });
+
+        // Update all objects based on current scale
+        function updateScale() {
+            // Smooth interpolation
+            currentExp += (targetExp - currentExp) * 0.1;
+            
+            objects.forEach(obj => {
+                const diff = obj.data.exp - currentExp;
+                const scale = Math.pow(2, -diff); // Logarithmic scaling
+                const opacity = 1 - Math.min(1, Math.abs(diff) / 4);
+                
+                if (opacity > 0.05 && scale > 0.01) {
+                    obj.element.style.display = 'block';
+                    obj.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                    obj.element.style.opacity = opacity;
+                    
+                    // Update active object info
+                    if (Math.abs(diff) < 0.3) {
+                        document.getElementById('objectName').textContent = obj.data.name;
+                        document.getElementById('objectSize').textContent = obj.data.size;
+                        document.getElementById('scientificNotation').textContent = obj.data.scientific;
+                        
+                        // Update body background glow
+                        document.body.style.backgroundColor = obj.data.color + '08';
+                    }
+                } else {
+                    obj.element.style.display = 'none';
+                }
+            });
+            
+            // Update scale bar (map exponent range -35 to 27 to 0-100%)
+            const percent = ((currentExp + 35) / 62) * 100;
+            document.getElementById('scaleFill').style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        }
+
+        // Zoom functions
+        function zoomIn() {
+            targetExp = Math.min(27, targetExp + 0.5);
+            updateScale();
+        }
+        
+        function zoomOut() {
+            targetExp = Math.max(-35, targetExp - 0.5);
+            updateScale();
+        }
+        
+        function reset() {
+            targetExp = 0;
+            updateScale();
+        }
+
+        // Animation loop
+        function animate() {
+            updateScale();
+            drawStars();
+            requestAnimationFrame(animate);
+        }
+
+        // Event listeners
         window.addEventListener('wheel', (e) => {
-            currentExp += e.deltaY * 0.005;
-            // Limit the zoom so they don't get lost in blackness
-            currentExp = Math.max(-36, Math.min(28, currentExp));
-            update();
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.3 : 0.3;
+            targetExp = Math.max(-35, Math.min(27, targetExp + delta));
+        }, { passive: false });
+
+        // Touch support
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const delta = (touchStartY - e.touches[0].clientY) * 0.01;
+            targetExp = Math.max(-35, Math.min(27, targetExp + delta));
+            touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+        document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        // Click on scale bar
+        const scaleBar = document.getElementById('scaleBar');
+        scaleBar.addEventListener('click', (e) => {
+            const rect = scaleBar.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percent = x / rect.width;
+            targetExp = -35 + (percent * 62);
         });
 
-        // Touch support for mobile
-        let touchStart = 0;
-        window.addEventListener('touchstart', e => touchStart = e.touches[0].clientY);
-        window.addEventListener('touchmove', e => {
-            const touchEnd = e.touches[0].clientY;
-            currentExp += (touchStart - touchEnd) * 0.01;
-            currentExp = Math.max(-36, Math.min(28, currentExp));
-            touchStart = touchEnd;
-            update();
+        // Initialize
+        resizeCanvas();
+        initStars();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initStars();
         });
-
-        update();
+        
+        animate();
+        
+        // Add floating particles effect
+        setInterval(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(particle);
+            
+            let opacity = 0.8;
+            const interval = setInterval(() => {
+                opacity -= 0.05;
+                particle.style.opacity = opacity;
+                particle.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
+                if (opacity <= 0) {
+                    clearInterval(interval);
+                    particle.remove();
+                }
+            }, 50);
+        }, 200);
     </script>
 </body>
 </html>
