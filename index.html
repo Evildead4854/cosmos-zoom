@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Cosmic Journey | From Earth to Infinity</title>
+    <title>Quantum to Cosmos | The Full Spectrum of Existence</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -12,7 +12,7 @@
             font-family: 'Space Grotesk', sans-serif;
         }
         
-        /* UI Layer */
+        /* UI Overlay */
         #ui {
             position: fixed;
             top: 0;
@@ -24,69 +24,68 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 30px 40px;
+            padding: 25px 35px;
             box-sizing: border-box;
         }
         
-        .info-card {
-            background: rgba(0, 0, 0, 0.6);
+        .info-panel {
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 242, 255, 0.3);
             border-radius: 20px;
-            padding: 20px 30px;
-            max-width: 400px;
+            padding: 18px 25px;
+            max-width: 380px;
             pointer-events: auto;
             transition: all 0.3s ease;
         }
         
-        .location-badge {
-            font-size: 0.7rem;
+        .category-badge {
+            font-size: 0.65rem;
             letter-spacing: 3px;
             text-transform: uppercase;
             color: #00f2ff;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
-        .location-name {
-            font-size: 2.2rem;
+        .entity-name {
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             background: linear-gradient(135deg, #fff, #00f2ff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
         }
         
-        .distance {
-            font-size: 0.9rem;
-            opacity: 0.7;
+        .size-info {
+            font-size: 0.85rem;
+            opacity: 0.8;
             font-family: monospace;
-            letter-spacing: 1px;
         }
         
-        .scale-info {
-            font-size: 0.8rem;
+        .scientific {
+            font-size: 0.7rem;
             opacity: 0.5;
-            margin-top: 8px;
+            margin-top: 5px;
         }
         
-        /* Controls */
-        .controls {
+        .controls-panel {
             pointer-events: auto;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .ctrl-btn {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            padding: 12px 28px;
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            border-radius: 40px;
+            padding: 10px 22px;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-family: inherit;
             letter-spacing: 2px;
             cursor: pointer;
@@ -100,16 +99,20 @@
             transform: scale(1.05);
         }
         
-        .progress-container {
+        .timeline-container {
             position: fixed;
-            bottom: 40px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 300px;
+            width: 350px;
             pointer-events: auto;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 12px 20px;
         }
         
-        .progress-bar {
+        .timeline-bar {
             width: 100%;
             height: 3px;
             background: rgba(255, 255, 255, 0.2);
@@ -118,403 +121,404 @@
             cursor: pointer;
         }
         
-        .progress-fill {
+        .timeline-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00f2ff, #ff00ff);
+            background: linear-gradient(90deg, #ff00ff, #00f2ff, #ffaa00);
             width: 0%;
             border-radius: 3px;
             transition: width 0.1s linear;
         }
         
-        .progress-labels {
+        .timeline-labels {
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
             font-size: 0.6rem;
-            opacity: 0.6;
+            opacity: 0.7;
             letter-spacing: 1px;
         }
         
-        .scroll-hint {
+        .instruction {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            font-size: 0.7rem;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.65rem;
             opacity: 0.4;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             pointer-events: none;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.6; }
+            background: rgba(0,0,0,0.5);
+            padding: 6px 12px;
+            border-radius: 20px;
         }
         
         @media (max-width: 768px) {
-            #ui { padding: 20px; }
-            .info-card { padding: 12px 20px; max-width: 280px; }
-            .location-name { font-size: 1.3rem; }
-            .controls { gap: 8px; }
-            .ctrl-btn { padding: 8px 16px; font-size: 0.6rem; }
-            .progress-container { width: 250px; bottom: 20px; }
-            .scroll-hint { bottom: 15px; right: 15px; font-size: 0.5rem; }
+            #ui { padding: 15px; }
+            .info-panel { padding: 12px 18px; max-width: 280px; }
+            .entity-name { font-size: 1.3rem; }
+            .controls-panel { gap: 6px; margin-bottom: 10px; }
+            .ctrl-btn { padding: 6px 14px; font-size: 0.6rem; }
+            .timeline-container { width: 280px; padding: 8px 15px; bottom: 15px; }
         }
     </style>
 </head>
 <body>
     <div id="ui">
-        <div class="info-card">
-            <div class="location-badge">✦ CURRENT LOCATION ✦</div>
-            <div class="location-name" id="locationName">Earth</div>
-            <div class="distance" id="distance">You are here</div>
-            <div class="scale-info" id="scaleInfo">Scale: Human perspective</div>
+        <div class="info-panel">
+            <div class="category-badge" id="categoryBadge">⚛️ QUANTUM REALM</div>
+            <div class="entity-name" id="entityName">Planck Length</div>
+            <div class="size-info" id="sizeInfo">1.6 × 10⁻³⁵ meters</div>
+            <div class="scientific" id="scientificInfo">The smallest measurable length</div>
         </div>
         
         <div>
-            <div class="controls">
+            <div class="controls-panel">
                 <button class="ctrl-btn" id="zoomOutBtn">⟵ ZOOM OUT</button>
                 <button class="ctrl-btn" id="zoomInBtn">ZOOM IN ⟶</button>
                 <button class="ctrl-btn" id="resetBtn">⟡ RESET</button>
+                <button class="ctrl-btn" id="quantumBtn">⚛️ QUANTUM</button>
+                <button class="ctrl-btn" id="humanBtn">👤 HUMAN</button>
+                <button class="ctrl-btn" id="cosmicBtn">🌌 COSMIC</button>
             </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress-fill" id="progressFill"></div>
+            <div class="timeline-container">
+                <div class="timeline-bar" id="timelineBar">
+                    <div class="timeline-fill" id="timelineFill"></div>
                 </div>
-                <div class="progress-labels">
+                <div class="timeline-labels">
+                    <span>⚛️ Planck</span>
+                    <span>🧬 Atomic</span>
+                    <span>🐜 Insect</span>
+                    <span>👤 Human</span>
                     <span>🌍 Earth</span>
-                    <span>🌌 Galaxy</span>
-                    <span>🌀 Universe</span>
+                    <span>🌞 Solar</span>
+                    <span>🌀 Galaxy</span>
+                    <span>🌌 Universe</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="scroll-hint">✦ SCROLL TO EXPLORE THE COSMOS ✦</div>
+    <div class="instruction">🖱️ DRAG to rotate | SCROLL to zoom through scales</div>
 
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
             }
         }
     </script>
 
     <script type="module">
         import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
         
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x010105);
-        scene.fog = new THREE.FogExp2(0x010105, 0.00001);
+        scene.background = new THREE.Color(0x000000);
+        scene.fog = new THREE.FogExp2(0x000000, 0.00001);
         
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000000000);
-        camera.position.set(0, 5, 15);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 1000000);
+        camera.position.set(0, 2, 5);
         
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMappingExposure = 1.2;
         document.body.appendChild(renderer.domElement);
         
-        // Controls state
-        let zoomLevel = 0; // 0 = Earth, 1 = Solar System, 2 = Galaxy, 3 = Universe
-        let targetZoom = 0;
-        let cameraDistance = 15;
+        // Post-processing bloom
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.5, 0.3, 0.2);
+        bloomPass.threshold = 0.1;
+        bloomPass.strength = 0.6;
+        bloomPass.radius = 0.5;
+        const effectComposer = new EffectComposer(renderer);
+        effectComposer.addPass(renderScene);
+        effectComposer.addPass(bloomPass);
         
-        // Starfield background
-        const starGeometry = new THREE.BufferGeometry();
-        const starCount = 3000;
+        // Controls for rotation
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.enableZoom = true;
+        controls.zoomSpeed = 1.5;
+        controls.rotateSpeed = 1.0;
+        controls.enablePan = true;
+        controls.panSpeed = 0.8;
+        
+        // Scale data - journey from quantum to cosmic
+        const scaleStages = [
+            { realm: "⚛️ QUANTUM REALM", name: "Planck Length", size: "1.6 × 10⁻³⁵ m", scientific: "The fabric of spacetime itself", exp: -35, cameraDist: 0.5, scale: 0.0001 },
+            { realm: "⚛️ QUANTUM REALM", name: "Quantum Foam", size: "10⁻³⁴ m", scientific: "Spacetime fluctuations", exp: -34, cameraDist: 0.6, scale: 0.0002 },
+            { realm: "⚛️ QUANTUM REALM", name: "Neutrino", size: "10⁻²⁴ m", scientific: "Ghost particle", exp: -24, cameraDist: 0.8, scale: 0.0005 },
+            { realm: "⚛️ QUANTUM REALM", name: "Quark", size: "10⁻¹⁸ m", scientific: "Building block of matter", exp: -18, cameraDist: 1.0, scale: 0.001 },
+            { realm: "⚛️ QUANTUM REALM", name: "Proton", size: "1.7 × 10⁻¹⁵ m", scientific: "Nuclear particle", exp: -15, cameraDist: 1.2, scale: 0.002 },
+            { realm: "🧬 ATOMIC SCALE", name: "Hydrogen Atom", size: "1.0 × 10⁻¹⁰ m", scientific: "Electron cloud", exp: -10, cameraDist: 1.5, scale: 0.005 },
+            { realm: "🧬 ATOMIC SCALE", name: "DNA Molecule", size: "2 × 10⁻⁹ m", scientific: "Blueprint of life", exp: -9, cameraDist: 1.8, scale: 0.01 },
+            { realm: "🦠 MICROSCOPIC", name: "Virus", size: "1 × 10⁻⁷ m", scientific: "Invisible invader", exp: -7, cameraDist: 2.0, scale: 0.03 },
+            { realm: "🦠 MICROSCOPIC", name: "Red Blood Cell", size: "8 × 10⁻⁶ m", scientific: "Carrier of life", exp: -5, cameraDist: 2.2, scale: 0.08 },
+            { realm: "🐜 LIVING WORLD", name: "Ant", size: "5 × 10⁻³ m", scientific: "Tiny architect", exp: -2.3, cameraDist: 2.5, scale: 0.3 },
+            { realm: "👤 HUMAN SCALE", name: "Human", size: "1.7 meters", scientific: "You are here", exp: 0, cameraDist: 3.0, scale: 1.0 },
+            { realm: "🌍 PLANETARY", name: "Earth", size: "12,742 km", scientific: "Our home", exp: 7.1, cameraDist: 8, scale: 5 },
+            { realm: "🌍 PLANETARY", name: "Jupiter", size: "139,820 km", scientific: "King of planets", exp: 8.1, cameraDist: 12, scale: 8 },
+            { realm: "🌞 STELLAR", name: "The Sun", size: "1.39 × 10⁶ km", scientific: "Our star", exp: 9.1, cameraDist: 18, scale: 12 },
+            { realm: "🌞 STELLAR", name: "Solar System", size: "287 billion km", scientific: "The Sun's family", exp: 12.4, cameraDist: 30, scale: 20 },
+            { realm: "🌀 GALACTIC", name: "Orion Nebula", size: "24 light-years", scientific: "Star nursery", exp: 17.4, cameraDist: 60, scale: 35 },
+            { realm: "🌀 GALACTIC", name: "Milky Way", size: "100,000 light-years", scientific: "Our galaxy", exp: 21, cameraDist: 120, scale: 70 },
+            { realm: "🌀 GALACTIC", name: "Local Group", size: "10 million light-years", scientific: "Galactic neighborhood", exp: 23, cameraDist: 200, scale: 120 },
+            { realm: "🌌 COSMIC", name: "Virgo Supercluster", size: "110 million light-years", scientific: "Galactic filament", exp: 24, cameraDist: 350, scale: 200 },
+            { realm: "🌌 COSMIC", name: "Observable Universe", size: "93 billion light-years", scientific: "The cosmic horizon", exp: 26.9, cameraDist: 600, scale: 350 }
+        ];
+        
+        // Create central objects for each scale
+        const objects = [];
+        
+        scaleStages.forEach((stage, idx) => {
+            let geometry, material, mesh;
+            const color = new THREE.Color().setHSL(0.55 + idx * 0.02, 0.8, 0.5);
+            
+            if (stage.name === "Earth") {
+                // Detailed Earth
+                geometry = new THREE.SphereGeometry(1, 128, 128);
+                material = new THREE.MeshStandardMaterial({
+                    color: 0x2277ff,
+                    emissive: 0x004466,
+                    roughness: 0.5,
+                    metalness: 0.1
+                });
+                mesh = new THREE.Mesh(geometry, material);
+                
+                // Add atmosphere
+                const atmGeo = new THREE.SphereGeometry(1.02, 64, 64);
+                const atmMat = new THREE.MeshPhongMaterial({ color: 0x44aaff, transparent: true, opacity: 0.15 });
+                const atmosphere = new THREE.Mesh(atmGeo, atmMat);
+                mesh.add(atmosphere);
+            } else if (stage.name === "The Sun") {
+                geometry = new THREE.SphereGeometry(1, 128, 128);
+                material = new THREE.MeshStandardMaterial({
+                    color: 0xffaa44,
+                    emissive: 0xff4422,
+                    emissiveIntensity: 0.8,
+                    roughness: 0.3
+                });
+                mesh = new THREE.Mesh(geometry, material);
+            } else if (stage.name === "Milky Way") {
+                // Galaxy particle system
+                const particleCount = 3000;
+                const particleGeo = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                for (let i = 0; i < particleCount; i++) {
+                    const radius = Math.pow(Math.random(), 1.5) * 2;
+                    const angle = Math.random() * Math.PI * 2;
+                    const y = (Math.random() - 0.5) * 0.5;
+                    positions[i*3] = Math.cos(angle) * radius;
+                    positions[i*3+1] = y;
+                    positions[i*3+2] = Math.sin(angle) * radius;
+                }
+                particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const particleMat = new THREE.PointsMaterial({ color: 0xffaa88, size: 0.03 });
+                mesh = new THREE.Points(particleGeo, particleMat);
+            } else if (stage.name === "Observable Universe") {
+                // Universe bubble
+                geometry = new THREE.SphereGeometry(1, 64, 64);
+                material = new THREE.MeshPhongMaterial({
+                    color: 0x113366,
+                    transparent: true,
+                    opacity: 0.15,
+                    wireframe: true
+                });
+                mesh = new THREE.Mesh(geometry, material);
+            } else {
+                geometry = new THREE.SphereGeometry(0.5, 64, 64);
+                material = new THREE.MeshStandardMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 0.3,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                mesh = new THREE.Mesh(geometry, material);
+            }
+            
+            mesh.userData = { stage: stage, scale: stage.scale, baseSize: 1 };
+            scene.add(mesh);
+            objects.push(mesh);
+        });
+        
+        // Add starfield background
+        const starCount = 4000;
+        const starGeo = new THREE.BufferGeometry();
         const starPositions = new Float32Array(starCount * 3);
         for (let i = 0; i < starCount; i++) {
-            starPositions[i*3] = (Math.random() - 0.5) * 20000;
-            starPositions[i*3+1] = (Math.random() - 0.5) * 20000;
-            starPositions[i*3+2] = (Math.random() - 0.5) * 5000 - 2000;
+            starPositions[i*3] = (Math.random() - 0.5) * 2000;
+            starPositions[i*3+1] = (Math.random() - 0.5) * 2000;
+            starPositions[i*3+2] = (Math.random() - 0.5) * 1000 - 500;
         }
-        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, transparent: true, opacity: 0.6 });
-        const stars = new THREE.Points(starGeometry, starMaterial);
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.6 });
+        const stars = new THREE.Points(starGeo, starMat);
         scene.add(stars);
         
-        // Earth with texture
-        const earthGeometry = new THREE.SphereGeometry(2, 128, 128);
-        const earthMaterial = new THREE.MeshStandardMaterial({
-            color: 0x2277ff,
-            emissive: 0x004466,
-            roughness: 0.5,
-            metalness: 0.1
-        });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
-        
-        // Atmosphere glow
-        const atmosphereGeometry = new THREE.SphereGeometry(2.05, 64, 64);
-        const atmosphereMaterial = new THREE.MeshPhongMaterial({
-            color: 0x44aaff,
-            transparent: true,
-            opacity: 0.15
-        });
-        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-        scene.add(atmosphere);
-        
-        // Clouds layer
-        const cloudGeometry = new THREE.SphereGeometry(2.02, 128, 128);
-        const cloudMaterial = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.1
-        });
-        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-        scene.add(clouds);
-        
-        // Solar System objects (will be scaled and positioned based on zoom)
-        const planets = [];
-        const planetData = [
-            { name: "Mercury", color: 0xcc9966, size: 0.38, distance: 4.5, speed: 0.02 },
-            { name: "Venus", color: 0xffaa66, size: 0.95, distance: 6, speed: 0.015 },
-            { name: "Earth", color: 0x2277ff, size: 1, distance: 7.5, speed: 0.012 },
-            { name: "Mars", color: 0xff6633, size: 0.53, distance: 9, speed: 0.01 },
-            { name: "Jupiter", color: 0xdd8866, size: 1.8, distance: 14, speed: 0.007 },
-            { name: "Saturn", color: 0xeeddbb, size: 1.5, distance: 17, speed: 0.005 },
-            { name: "Uranus", color: 0x88ccff, size: 1.2, distance: 20, speed: 0.004 },
-            { name: "Neptune", color: 0x3366cc, size: 1.15, distance: 23, speed: 0.003 }
-        ];
-        
-        planetData.forEach((data, i) => {
-            const geometry = new THREE.SphereGeometry(data.size, 64, 64);
-            const material = new THREE.MeshStandardMaterial({ color: data.color, emissive: 0x111111 });
-            const planet = new THREE.Mesh(geometry, material);
-            planet.userData = { distance: data.distance, speed: data.speed, angle: Math.random() * Math.PI * 2, name: data.name };
-            scene.add(planet);
-            planets.push(planet);
-            
-            // Add orbit ring
-            const orbitPoints = [];
-            const orbitRadius = data.distance;
-            for (let i = 0; i <= 100; i++) {
-                const angle = (i / 100) * Math.PI * 2;
-                const x = Math.cos(angle) * orbitRadius;
-                const z = Math.sin(angle) * orbitRadius;
-                orbitPoints.push(new THREE.Vector3(x, 0, z));
+        // Add orbiting particles around objects (quantum glow)
+        const particleSystems = [];
+        objects.forEach((obj, i) => {
+            const particleCount = 200;
+            const particleGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let j = 0; j < particleCount; j++) {
+                positions[j*3] = (Math.random() - 0.5) * 1.5;
+                positions[j*3+1] = (Math.random() - 0.5) * 1.5;
+                positions[j*3+2] = (Math.random() - 0.5) * 1.5;
             }
-            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
-            const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x336699, transparent: true, opacity: 0.3 });
-            const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
-            scene.add(orbit);
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.02, transparent: true, opacity: 0.5 });
+            const particles = new THREE.Points(particleGeo, particleMat);
+            obj.add(particles);
+            particleSystems.push(particles);
         });
-        
-        // Saturn's rings
-        const ringGeometry = new THREE.TorusGeometry(2.2, 0.4, 32, 100);
-        const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xccaa88, emissive: 0x442200 });
-        const saturnRing = new THREE.Mesh(ringGeometry, ringMaterial);
-        saturnRing.rotation.x = Math.PI / 2;
-        scene.add(saturnRing);
-        
-        // Galaxy particles
-        const galaxyParticleCount = 5000;
-        const galaxyGeometry = new THREE.BufferGeometry();
-        const galaxyPositions = new Float32Array(galaxyParticleCount * 3);
-        const galaxyColors = new Float32Array(galaxyParticleCount * 3);
-        for (let i = 0; i < galaxyParticleCount; i++) {
-            const radius = Math.pow(Math.random(), 1.5) * 80;
-            const angle = Math.random() * Math.PI * 2;
-            const y = (Math.random() - 0.5) * 15;
-            galaxyPositions[i*3] = Math.cos(angle) * radius;
-            galaxyPositions[i*3+1] = y;
-            galaxyPositions[i*3+2] = Math.sin(angle) * radius;
-            
-            const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.1, 0.8, 0.5);
-            galaxyColors[i*3] = color.r;
-            galaxyColors[i*3+1] = color.g;
-            galaxyColors[i*3+2] = color.b;
-        }
-        galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(galaxyPositions, 3));
-        galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(galaxyColors, 3));
-        const galaxyMaterial = new THREE.PointsMaterial({ size: 0.3, vertexColors: true, transparent: true, opacity: 0.6 });
-        const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
-        scene.add(galaxy);
-        
-        // Universe particles (distant galaxies)
-        const universeParticleCount = 8000;
-        const universeGeometry = new THREE.BufferGeometry();
-        const universePositions = new Float32Array(universeParticleCount * 3);
-        for (let i = 0; i < universeParticleCount; i++) {
-            universePositions[i*3] = (Math.random() - 0.5) * 2000;
-            universePositions[i*3+1] = (Math.random() - 0.5) * 1000;
-            universePositions[i*3+2] = (Math.random() - 0.5) * 1500 - 500;
-        }
-        universeGeometry.setAttribute('position', new THREE.BufferAttribute(universePositions, 3));
-        const universeMaterial = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.2, transparent: true, opacity: 0.4 });
-        const universeParticles = new THREE.Points(universeGeometry, universeMaterial);
-        scene.add(universeParticles);
         
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0x222222);
+        const ambientLight = new THREE.AmbientLight(0x111122);
         scene.add(ambientLight);
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-        sunLight.position.set(10, 20, 5);
-        scene.add(sunLight);
-        const backLight = new THREE.PointLight(0x4488ff, 0.3);
-        backLight.position.set(0, 0, -10);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+        mainLight.position.set(5, 10, 7);
+        scene.add(mainLight);
+        const backLight = new THREE.PointLight(0x4488ff, 0.5);
+        backLight.position.set(0, 0, -5);
         scene.add(backLight);
+        const fillLight = new THREE.PointLight(0xffaa44, 0.3);
+        fillLight.position.set(3, 2, 4);
+        scene.add(fillLight);
         
-        // Camera animation variables
-        let time = 0;
+        // State management
+        let currentIndex = 10; // Start at Human
+        let targetIndex = 10;
+        let currentCameraDist = scaleStages[10].cameraDist;
         
         // UI Elements
-        const locationNameEl = document.getElementById('locationName');
-        const distanceEl = document.getElementById('distance');
-        const scaleInfoEl = document.getElementById('scaleInfo');
-        const progressFill = document.getElementById('progressFill');
+        const categoryBadge = document.getElementById('categoryBadge');
+        const entityName = document.getElementById('entityName');
+        const sizeInfo = document.getElementById('sizeInfo');
+        const scientificInfo = document.getElementById('scientificInfo');
+        const timelineFill = document.getElementById('timelineFill');
         
-        // Zoom levels mapping
-        const zoomStages = [
-            { name: "Earth", distance: "You are here", scale: "Human perspective", cameraDist: 15, earthScale: 1, planetOpacity: 0, galaxyOpacity: 0, universeOpacity: 0 },
-            { name: "Solar System", distance: "~1 AU from Sun", scale: "Astronomical scale", cameraDist: 35, earthScale: 0.8, planetOpacity: 1, galaxyOpacity: 0, universeOpacity: 0 },
-            { name: "Milky Way Galaxy", distance: "~100,000 light-years across", scale: "Galactic scale", cameraDist: 120, earthScale: 0.3, planetOpacity: 0.3, galaxyOpacity: 1, universeOpacity: 0 },
-            { name: "Observable Universe", distance: "~93 billion light-years", scale: "Cosmic scale", cameraDist: 350, earthScale: 0.05, planetOpacity: 0, galaxyOpacity: 0.5, universeOpacity: 1 }
-        ];
-        
-        function updateZoom() {
+        function updateScale() {
             // Smooth interpolation
-            zoomLevel += (targetZoom - zoomLevel) * 0.05;
-            const stage = Math.floor(zoomLevel);
-            const blend = zoomLevel - stage;
+            currentIndex += (targetIndex - currentIndex) * 0.05;
+            const idx = Math.floor(currentIndex);
+            const blend = currentIndex - idx;
             
-            const currentStage = zoomStages[Math.min(stage, zoomStages.length - 1)];
-            const nextStage = zoomStages[Math.min(stage + 1, zoomStages.length - 1)];
+            const currentStage = scaleStages[Math.min(idx, scaleStages.length - 1)];
+            const nextStage = scaleStages[Math.min(idx + 1, scaleStages.length - 1)];
             
             if (currentStage) {
-                // Interpolate camera distance
-                if (nextStage) {
-                    cameraDistance = currentStage.cameraDist + (nextStage.cameraDist - currentStage.cameraDist) * blend;
-                } else {
-                    cameraDistance = currentStage.cameraDist;
-                }
-                
                 // Update UI
                 if (blend < 0.5 || !nextStage) {
-                    locationNameEl.textContent = currentStage.name;
-                    distanceEl.textContent = currentStage.distance;
-                    scaleInfoEl.textContent = currentStage.scale;
+                    categoryBadge.textContent = currentStage.realm;
+                    entityName.textContent = currentStage.name;
+                    sizeInfo.textContent = currentStage.size;
+                    scientificInfo.textContent = currentStage.scientific;
                 } else {
-                    locationNameEl.textContent = nextStage.name;
-                    distanceEl.textContent = nextStage.distance;
-                    scaleInfoEl.textContent = nextStage.scale;
+                    categoryBadge.textContent = nextStage.realm;
+                    entityName.textContent = nextStage.name;
+                    sizeInfo.textContent = nextStage.size;
+                    scientificInfo.textContent = nextStage.scientific;
                 }
             }
             
-            // Update progress bar
-            const progress = zoomLevel / (zoomStages.length - 1);
-            progressFill.style.width = `${progress * 100}%`;
+            // Update timeline
+            const progress = currentIndex / (scaleStages.length - 1);
+            timelineFill.style.width = `${progress * 100}%`;
             
-            // Animate camera
-            const targetPos = new THREE.Vector3(0, 2, cameraDistance);
-            camera.position.lerp(targetPos, 0.05);
-            camera.lookAt(0, 0, 0);
+            // Update all objects visibility and scale
+            objects.forEach((obj, i) => {
+                const stage = obj.userData.stage;
+                const distance = Math.abs(currentIndex - i);
+                const opacity = Math.max(0, 1 - distance * 0.15);
+                
+                if (opacity > 0.01) {
+                    obj.visible = true;
+                    // Scale based on distance from current view
+                    const scaleFactor = Math.pow(2, -(stage.exp - (currentStage?.exp || 0))) * 0.5;
+                    const finalScale = Math.min(3, Math.max(0.05, scaleFactor));
+                    obj.scale.setScalar(finalScale);
+                    
+                    if (obj.material) {
+                        obj.material.transparent = true;
+                        obj.material.opacity = Math.min(1, opacity);
+                    }
+                } else {
+                    obj.visible = false;
+                }
+            });
             
-            // Scale Earth and atmosphere based on zoom
-            let earthScale = 1;
-            let planetOpacity = 0;
-            let galaxyOpacity = 0;
-            let universeOpacity = 0;
-            
-            if (zoomLevel < 1) {
-                earthScale = 1 - zoomLevel * 0.7;
-                planetOpacity = zoomLevel;
-                galaxyOpacity = 0;
-                universeOpacity = 0;
-            } else if (zoomLevel < 2) {
-                const t = (zoomLevel - 1);
-                earthScale = 0.3 - t * 0.25;
-                planetOpacity = 1 - t;
-                galaxyOpacity = t;
-                universeOpacity = 0;
+            // Update camera distance
+            if (nextStage) {
+                currentCameraDist = currentStage.cameraDist + (nextStage.cameraDist - currentStage.cameraDist) * blend;
             } else {
-                const t = Math.min(1, zoomLevel - 2);
-                earthScale = 0.05 - t * 0.04;
-                planetOpacity = 0;
-                galaxyOpacity = 1 - t;
-                universeOpacity = t;
+                currentCameraDist = currentStage.cameraDist;
             }
             
-            earth.scale.setScalar(Math.max(0.01, earthScale));
-            atmosphere.scale.setScalar(Math.max(0.01, earthScale));
-            clouds.scale.setScalar(Math.max(0.01, earthScale));
-            
-            // Update planet visibility and scale
-            planets.forEach(planet => {
-                planet.scale.setScalar(earthScale);
-                if (planetOpacity > 0) {
-                    planet.material.opacity = Math.min(1, planetOpacity);
-                    planet.material.transparent = true;
-                }
-            });
-            saturnRing.scale.setScalar(earthScale);
-            saturnRing.material.opacity = planetOpacity;
-            saturnRing.material.transparent = true;
-            
-            // Update galaxy and universe opacity
-            galaxy.material.opacity = galaxyOpacity * 0.6;
-            universeParticles.material.opacity = universeOpacity * 0.4;
-            stars.material.opacity = 0.3 + zoomLevel * 0.2;
+            // Smooth camera movement
+            const targetPos = new THREE.Vector3(0, 0, currentCameraDist);
+            camera.position.lerp(targetPos, 0.05);
+            controls.target.set(0, 0, 0);
+            controls.update();
         }
         
-        // Update planet positions
-        function updatePlanets() {
-            planets.forEach((planet, i) => {
-                const data = planetData[i];
-                planet.userData.angle += data.speed * 0.5;
-                const x = Math.cos(planet.userData.angle) * data.distance;
-                const z = Math.sin(planet.userData.angle) * data.distance;
-                planet.position.set(x, 0, z);
-            });
-            // Saturn rings position
-            if (planets[5]) {
-                saturnRing.position.copy(planets[5].position);
-                saturnRing.rotation.z = time * 0.2;
-            }
-        }
-        
-        // Rotate galaxy
-        function updateGalaxy() {
-            galaxy.rotation.y += 0.002;
-            galaxy.rotation.x = Math.sin(time * 0.1) * 0.1;
-        }
-        
-        // Zoom controls
+        // Zoom functions
         function zoomOut() {
-            targetZoom = Math.min(zoomStages.length - 1, targetZoom + 0.15);
+            targetIndex = Math.min(scaleStages.length - 1, targetIndex + 0.3);
         }
         
         function zoomIn() {
-            targetZoom = Math.max(0, targetZoom - 0.15);
+            targetIndex = Math.max(0, targetIndex - 0.3);
         }
         
         function reset() {
-            targetZoom = 0;
+            targetIndex = 10; // Human scale
+        }
+        
+        function goToQuantum() {
+            targetIndex = 0;
+        }
+        
+        function goToHuman() {
+            targetIndex = 10;
+        }
+        
+        function goToCosmic() {
+            targetIndex = scaleStages.length - 1;
         }
         
         // Event listeners
         document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
         document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
         document.getElementById('resetBtn').addEventListener('click', reset);
+        document.getElementById('quantumBtn').addEventListener('click', goToQuantum);
+        document.getElementById('humanBtn').addEventListener('click', goToHuman);
+        document.getElementById('cosmicBtn').addEventListener('click', goToCosmic);
         
-        // Scroll wheel
-        window.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            if (e.deltaY > 0) {
-                targetZoom = Math.min(zoomStages.length - 1, targetZoom + 0.05);
-            } else {
-                targetZoom = Math.max(0, targetZoom - 0.05);
-            }
-        }, { passive: false });
-        
-        // Click on progress bar
-        const progressBar = document.getElementById('progressBar');
-        progressBar.addEventListener('click', (e) => {
-            const rect = progressBar.getBoundingClientRect();
+        // Timeline click
+        const timelineBar = document.getElementById('timelineBar');
+        timelineBar.addEventListener('click', (e) => {
+            const rect = timelineBar.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const percent = x / rect.width;
-            targetZoom = percent * (zoomStages.length - 1);
+            targetIndex = percent * (scaleStages.length - 1);
+        });
+        
+        // Scroll wheel for zoom
+        window.addEventListener('wheel', (e) => {
+            if (e.deltaY > 0) {
+                targetIndex = Math.min(scaleStages.length - 1, targetIndex + 0.08);
+            } else {
+                targetIndex = Math.max(0, targetIndex - 0.08);
+            }
         });
         
         // Touch support
@@ -524,44 +528,49 @@
         });
         
         window.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const delta = (touchStartY - e.touches[0].clientY) * 0.005;
-            targetZoom = Math.min(zoomStages.length - 1, Math.max(0, targetZoom + delta));
+            const delta = (touchStartY - e.touches[0].clientY) * 0.003;
+            targetIndex = Math.min(scaleStages.length - 1, Math.max(0, targetIndex + delta));
             touchStartY = e.touches[0].clientY;
-        }, { passive: false });
+        });
         
         // Animation loop
+        let time = 0;
+        
         function animate() {
             requestAnimationFrame(animate);
             time += 0.016;
             
-            updateZoom();
-            updatePlanets();
-            updateGalaxy();
-            
-            // Rotate Earth
-            earth.rotation.y += 0.005;
-            atmosphere.rotation.y += 0.003;
-            clouds.rotation.y += 0.007;
+            updateScale();
             
             // Rotate stars slowly
             stars.rotation.y += 0.0005;
+            stars.rotation.x += 0.0003;
             
-            renderer.render(scene, camera);
+            // Animate particles
+            particleSystems.forEach((system, i) => {
+                system.rotation.y = time * 0.5;
+                system.rotation.x = time * 0.3;
+            });
+            
+            // Rotate objects at different speeds
+            objects.forEach((obj, i) => {
+                obj.rotation.y += 0.005;
+            });
+            
+            effectComposer.render();
         }
         
         animate();
         
-        // Handle window resize
+        // Handle resize
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            effectComposer.setSize(window.innerWidth, window.innerHeight);
         }
         
-        // Add some floating particles effect
-        console.log('🌌 Cosmic journey started | From Earth to Infinity');
+        console.log('🌌 Universe simulation ready | Drag to rotate | Scroll through all scales');
     </script>
 </body>
 </html>
