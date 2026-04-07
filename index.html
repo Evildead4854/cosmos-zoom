@@ -2,130 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D N‑Body Gravity | Real Orbital Mechanics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>True Scale N-Body Universe</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        #ui {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            padding: 15px 25px;
-            border-radius: 15px;
-            border-left: 4px solid #ffaa44;
-            z-index: 100;
-            pointer-events: none;
-            color: white;
-            max-width: 280px;
-        }
-        .title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: #ffaa44;
-            margin-bottom: 5px;
-        }
-        .stats {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 5px 0;
-        }
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 50px;
-            z-index: 100;
-            pointer-events: auto;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        button {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.75rem;
-        }
-        button:hover {
-            background: #ffaa44;
-            color: black;
-            border-color: #ffaa44;
-        }
-        .slider-container {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            padding: 8px 15px;
-            border-radius: 20px;
-            pointer-events: auto;
-            color: white;
-            font-size: 0.7rem;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 100;
-        }
-        .slider-container label {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
-        input {
-            width: 140px;
-            cursor: pointer;
-        }
-        .instruction {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.4);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            color: #aaa;
-            pointer-events: none;
-        }
-        @media (max-width: 700px) {
-            .controls { gap: 6px; padding: 8px 12px; }
-            button { padding: 4px 8px; font-size: 0.6rem; }
-            .slider-container { bottom: 80px; left: 10px; }
-        }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #00ffcc; }
+        #ui { position: absolute; top: 20px; left: 20px; background: rgba(0,20,20,0.8); padding: 20px; border: 1px solid #00ffcc; pointer-events: none; }
+        h1 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; }
+        p { margin: 5px 0; font-size: 12px; }
+        .controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+        button { background: #002222; border: 1px solid #00ffcc; color: #00ffcc; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #00ffcc; color: #000; }
     </style>
 </head>
 <body>
     <div id="ui">
-        <div class="title">✦ N‑BODY GRAVITY ENGINE ✦</div>
-        <div class="stats" id="bodyCount">Bodies: 5</div>
-        <div id="infoText" style="font-size:0.7rem; opacity:0.7;">Real physics | No fixed orbits</div>
+        <h1>System Status: N-Body Active</h1>
+        <p>Simulation Speed: 1.5 Days / Frame</p>
+        <p>Integration: Semi-Implicit Euler</p>
+        <p id="target-info">Target: SYSTEM CENTER</p>
+        <p style="color: #ff5555; margin-top: 15px;">WARNING: TRUE SCALE.<br>Planets are invisible from a distance.<br>Use buttons to lock camera.</p>
     </div>
-    <div class="slider-container">
-        <label>🌌 Gravity (G) <span id="gVal">1.0</span><input type="range" id="gravitySlider" min="0.2" max="2.0" step="0.01" value="1.0"></label>
-        <label>⏱️ Time speed <span id="timeVal">1.0</span><input type="range" id="timeSlider" min="0" max="2.5" step="0.01" value="1.0"></label>
-    </div>
+    
     <div class="controls">
-        <button id="spawnBtn">☄️ Spawn Asteroid</button>
-        <button id="resetBtn">⟳ Reset System</button>
+        <button onclick="setTarget('Sun')">Sun</button>
+        <button onclick="setTarget('Mercury')">Mercury</button>
+        <button onclick="setTarget('Venus')">Venus</button>
+        <button onclick="setTarget('Earth')">Earth</button>
+        <button onclick="setTarget('Mars')">Mars</button>
+        <button onclick="setTarget('Jupiter')">Jupiter</button>
     </div>
-    <div class="instruction">🖱️ Drag to rotate | Scroll to zoom | Real gravity simulation</div>
 
     <script type="importmap">
         {
@@ -139,315 +44,189 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        // --- Setup Scene with Logarithmic Depth Buffer (mandatory for space scales) ---
+        // --- 1. ENGINE SETUP (Logarithmic Depth is MANDATORY for Space) ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x010118);
-        scene.fog = new THREE.FogExp2(0x010118, 0.0003);
-
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 1e9);
-        camera.position.set(0, 20, 40);
-        camera.lookAt(0, 0, 0);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.0000001, 10000);
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            logarithmicDepthBuffer: true // THE SECRET SAUCE FOR UNIVERSE SCALES
+        });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.shadowMap.enabled = true;
         document.body.appendChild(renderer.domElement);
 
-        // Post-processing bloom for stars/planets
-        const renderScene = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.6, 0.3, 0.2);
-        bloomPass.threshold = 0.1;
-        bloomPass.strength = 0.4;
-        const effectComposer = new EffectComposer(renderer);
-        effectComposer.addPass(renderScene);
-        effectComposer.addPass(bloomPass);
-
-        // Controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = false;
-        controls.enableZoom = true;
-        controls.zoomSpeed = 1.2;
-        controls.rotateSpeed = 0.8;
-        controls.enablePan = true;
 
-        // --- Lighting ---
-        const ambientLight = new THREE.AmbientLight(0x111122);
-        scene.add(ambientLight);
-        const mainLight = new THREE.DirectionalLight(0xffeedd, 1);
-        mainLight.position.set(5, 10, 7);
-        scene.add(mainLight);
-        const fillLight = new THREE.PointLight(0x4466ff, 0.3);
-        fillLight.position.set(-3, 2, -5);
-        scene.add(fillLight);
+        // --- 2. ASTROPHYSICS CONSTANTS ---
+        // We use the Astronomical System of Units to prevent floating point explosion
+        // Mass = Solar Masses (Sun = 1)
+        // Distance = Astronomical Units (1 AU = 149.6 million km)
+        // Time = Years
+        const G = 39.478; // Gravitational Constant in AU^3 / (M_sun * yr^2)
+        const dt = 0.004; // Time step per frame (~1.46 days)
 
-        // --- Starfield background (static, for depth) ---
-        const starCount = 4000;
-        const starGeo = new THREE.BufferGeometry();
-        const starPos = [];
-        for (let i = 0; i < starCount; i++) {
-            starPos.push((Math.random() - 0.5) * 800, (Math.random() - 0.5) * 500, (Math.random() - 0.5) * 300 - 150);
+        const bodies = [];
+        const trails = [];
+
+        // --- 3. PROCEDURAL GENERATORS ---
+        function createStarfield() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(30000 * 3);
+            for(let i=0; i<90000; i++) pos[i] = (Math.random() - 0.5) * 2000;
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({color: 0xffffff, size: 0.05, transparent: true, opacity: 0.6});
+            scene.add(new THREE.Points(geo, mat));
         }
-        starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPos), 3));
-        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.6 });
-        const stars = new THREE.Points(starGeo, starMat);
-        scene.add(stars);
+        createStarfield();
 
-        // --- Helper: create a sphere with optional glow ---
-        function createBody(radius, color, emissive = 0x000000, emissiveIntensity = 0) {
-            const material = new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity, roughness: 0.4, metalness: 0.1 });
-            const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 64, 64), material);
-            mesh.castShadow = true;
-            mesh.receiveShadow = false;
-            return mesh;
-        }
+        const texLoader = new THREE.TextureLoader();
 
-        // --- Gravitational constant (real world: 6.67430e-11, but scaled for simulation) ---
-        let G = 0.8;        // tuned for visual stability
-        let timeScale = 1.0;
-        
-        // --- Body class: position, velocity, mass, visual, trail ---
-        class Body {
-            constructor(name, mass, radius, color, pos, vel, emissive = false) {
-                this.name = name;
-                this.mass = mass;
-                this.radius = radius;
-                this.color = color;
-                this.pos = pos.clone();
-                this.vel = vel.clone();
-                this.acc = new THREE.Vector3(0, 0, 0);
-                this.mesh = createBody(radius, color, emissive ? 0xff4422 : 0x000000, emissive ? 0.6 : 0);
-                this.mesh.userData = { body: this };
-                scene.add(this.mesh);
-                // Trail history (positions for line)
-                this.trailPositions = [];
-                this.maxTrail = 200;
-                this.trailLine = null;
-                this.initTrail();
-            }
+        // Object Factory
+        function createCelestialBody(name, mass, radiusAU, distAU, color, hasLight = false) {
+            // High-segment sphere for crisp rendering up close
+            const geo = new THREE.SphereGeometry(radiusAU, 64, 64);
+            let mat;
             
-            initTrail() {
-                const material = new THREE.LineBasicMaterial({ color: this.color });
-                const geometry = new THREE.BufferGeometry();
-                this.trailLine = new THREE.Line(geometry, material);
-                scene.add(this.trailLine);
+            if(hasLight) {
+                mat = new THREE.MeshBasicMaterial({ color: color });
+                const light = new THREE.PointLight(0xffffff, 1.5, 0, 0); // Infinite range
+                scene.add(light);
+            } else {
+                mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.8 });
             }
+
+            const mesh = new THREE.Mesh(geo, mat);
             
-            updateTrail() {
-                this.trailPositions.push(this.pos.clone());
-                if (this.trailPositions.length > this.maxTrail) this.trailPositions.shift();
-                const points = this.trailPositions.map(p => p.clone());
-                const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                this.trailLine.geometry.dispose();
-                this.trailLine.geometry = geometry;
-            }
-            
-            updateVisual() {
-                this.mesh.position.copy(this.pos);
-            }
-            
-            remove() {
-                scene.remove(this.mesh);
-                scene.remove(this.trailLine);
-                if (this.trailLine.geometry) this.trailLine.geometry.dispose();
-            }
+            // Calculate orbital velocity for circular orbit (v = sqrt(G*M/r))
+            // This is just the starting push. Gravity takes over immediately.
+            let velZ = distAU > 0 ? Math.sqrt(G * 1.0 / distAU) : 0;
+
+            mesh.position.set(distAU, 0, 0);
+            scene.add(mesh);
+
+            // Create Trail
+            const trailGeo = new THREE.BufferGeometry();
+            const trailMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3 });
+            const trail = new THREE.Line(trailGeo, trailMat);
+            scene.add(trail);
+
+            const body = {
+                name: name,
+                mesh: mesh,
+                mass: mass,
+                radius: radiusAU,
+                vel: new THREE.Vector3(0, 0, velZ),
+                acc: new THREE.Vector3(0, 0, 0),
+                path: [], // Store history for trail
+                trailLine: trail
+            };
+
+            bodies.push(body);
+            return body;
         }
 
-        // --- Simulation state ---
-        let bodies = [];
-        let nextId = 0;
-        
-        // --- Gravity force calculation (Newton's law) ---
-        function computeAccelerations() {
-            // Reset accelerations
-            bodies.forEach(b => b.acc.set(0, 0, 0));
-            
-            // For each pair, compute gravitational force
+        // --- 4. THE REAL SOLAR SYSTEM DATA ---
+        scene.add(new THREE.AmbientLight(0x222222));
+
+        // Sun: Mass = 1, Radius = 696,000 km (0.00465 AU)
+        createCelestialBody("Sun", 1.0, 0.00465, 0, 0xffddaa, true);
+
+        // Mercury: Mass = 1.65e-7, Radius = 2,439 km, Dist = 0.387 AU
+        createCelestialBody("Mercury", 1.65e-7, 0.0000163, 0.387, 0xaaaaaa);
+
+        // Venus: Mass = 2.44e-6, Radius = 6,051 km, Dist = 0.723 AU
+        createCelestialBody("Venus", 2.44e-6, 0.0000404, 0.723, 0xffcc88);
+
+        // Earth: Mass = 3.00e-6, Radius = 6,371 km, Dist = 1.0 AU
+        createCelestialBody("Earth", 3.00e-6, 0.0000425, 1.0, 0x4488ff);
+
+        // Mars: Mass = 3.21e-7, Radius = 3,389 km, Dist = 1.524 AU
+        createCelestialBody("Mars", 3.21e-7, 0.0000226, 1.524, 0xff4422);
+
+        // Jupiter: Mass = 0.00095, Radius = 69,911 km, Dist = 5.204 AU
+        createCelestialBody("Jupiter", 0.00095, 0.000467, 5.204, 0xccaa88);
+
+        // --- 5. CAMERA TARGETING SYSTEM ---
+        let targetBody = null;
+        camera.position.set(0, 2, 6); // Start looking at inner solar system
+
+        window.setTarget = function(name) {
+            const body = bodies.find(b => b.name === name);
+            if (body) {
+                targetBody = body;
+                document.getElementById('target-info').innerText = "Target: " + name;
+                // Move camera close to the planet based on its true size
+                const offset = body.radius * 5; 
+                camera.position.copy(body.mesh.position).add(new THREE.Vector3(offset, offset, offset));
+            }
+        };
+
+        // --- 6. THE PHYSICS ENGINE (N-Body Loop) ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Step 1: Calculate Gravity between ALL objects
             for (let i = 0; i < bodies.length; i++) {
-                for (let j = i + 1; j < bodies.length; j++) {
-                    const a = bodies[i];
-                    const b = bodies[j];
-                    const diff = new THREE.Vector3().subVectors(b.pos, a.pos);
-                    const distSq = diff.lengthSq();
-                    const dist = Math.sqrt(distSq);
-                    // Avoid extreme forces when too close (softening)
-                    const softeningSq = 1.5;
-                    const forceMag = (G * a.mass * b.mass) / (distSq + softeningSq);
-                    const direction = diff.clone().divideScalar(dist);
-                    const forceVec = direction.multiplyScalar(forceMag);
+                let bodyA = bodies[i];
+                let force = new THREE.Vector3(0, 0, 0);
+
+                for (let j = 0; j < bodies.length; j++) {
+                    if (i === j) continue;
+                    let bodyB = bodies[j];
+
+                    // Find distance and direction
+                    let diff = new THREE.Vector3().subVectors(bodyB.mesh.position, bodyA.mesh.position);
+                    let distSq = diff.lengthSq();
                     
-                    // a gets force towards b, b gets opposite
-                    const accA = forceVec.clone().divideScalar(a.mass);
-                    const accB = forceVec.clone().negate().divideScalar(b.mass);
-                    a.acc.add(accA);
-                    b.acc.add(accB);
+                    // F = G * (m1 * m2) / r^2
+                    let fMag = (G * bodyA.mass * bodyB.mass) / distSq;
+                    
+                    // Add force vector
+                    force.add(diff.normalize().multiplyScalar(fMag));
+                }
+                // Convert force to acceleration (a = F/m)
+                bodyA.acc.copy(force.divideScalar(bodyA.mass));
+            }
+
+            // Step 2: Apply Acceleration to Velocity, and Velocity to Position (Euler Integration)
+            for (let i = 0; i < bodies.length; i++) {
+                let body = bodies[i];
+                
+                // If it's the Sun, keep it anchored for viewing stability (optional, but good for this scale)
+                if (body.name === "Sun") continue; 
+
+                body.vel.addScaledVector(body.acc, dt);
+                body.mesh.position.addScaledVector(body.vel, dt);
+
+                // Update Trails (Record position every few frames)
+                if (Math.random() > 0.8) {
+                    body.path.push(body.mesh.position.clone());
+                    if (body.path.length > 300) body.path.shift(); // Max trail length
+                    body.trailLine.geometry.setFromPoints(body.path);
                 }
             }
-        }
-        
-        // --- Integration (Semi-implicit Euler) ---
-        function updatePhysics(dt) {
-            const dtScaled = dt * timeScale;
-            computeAccelerations();
-            bodies.forEach(body => {
-                body.vel.x += body.acc.x * dtScaled;
-                body.vel.y += body.acc.y * dtScaled;
-                body.vel.z += body.acc.z * dtScaled;
-                body.pos.x += body.vel.x * dtScaled;
-                body.pos.y += body.vel.y * dtScaled;
-                body.pos.z += body.vel.z * dtScaled;
-                body.updateVisual();
-                body.updateTrail();
-            });
-        }
-        
-        // --- Initialize a stable solar system (star + planets with orbital velocities) ---
-        function initSystem() {
-            // Remove existing bodies
-            bodies.forEach(b => b.remove());
-            bodies = [];
-            
-            // Central star (massive)
-            const starMass = 200.0;
-            const star = new Body("Star", starMass, 1.8, 0xffaa66, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0), true);
-            bodies.push(star);
-            
-            // Helper: circular orbital velocity for a given distance from star
-            function orbitalVelocity(starMass, distance) {
-                const v = Math.sqrt((G * starMass) / distance);
-                // Random direction in XZ plane
-                const angle = Math.random() * Math.PI * 2;
-                return new THREE.Vector3(Math.cos(angle) * v, 0, Math.sin(angle) * v);
+
+            // Step 3: Handle Camera Focus
+            if (targetBody) {
+                controls.target.copy(targetBody.mesh.position);
+                // Dynamically adjust camera zoom speed based on object scale
+                controls.minDistance = targetBody.radius * 1.5;
             }
-            
-            // Planet 1: close, fast
-            const p1Mass = 2.5;
-            const p1Dist = 7;
-            const p1Vel = orbitalVelocity(starMass, p1Dist);
-            const p1 = new Body("Planet A", p1Mass, 0.45, 0x88aaff, new THREE.Vector3(p1Dist, 0, 0), p1Vel);
-            bodies.push(p1);
-            
-            // Planet 2: medium
-            const p2Mass = 3.2;
-            const p2Dist = 12;
-            const p2Vel = orbitalVelocity(starMass, p2Dist);
-            const p2 = new Body("Planet B", p2Mass, 0.55, 0xffaa88, new THREE.Vector3(0, 0, p2Dist), p2Vel);
-            bodies.push(p2);
-            
-            // Planet 3: farther, slightly inclined
-            const p3Mass = 4.0;
-            const p3Dist = 18;
-            const p3Vel = orbitalVelocity(starMass, p3Dist);
-            const p3 = new Body("Planet C", p3Mass, 0.65, 0x88ffaa, new THREE.Vector3(p3Dist * 0.7, 2, p3Dist * 0.7), p3Vel);
-            bodies.push(p3);
-            
-            // Planet 4: gas giant style
-            const p4Mass = 8.0;
-            const p4Dist = 25;
-            const p4Vel = orbitalVelocity(starMass, p4Dist);
-            const p4 = new Body("Planet D", p4Mass, 0.9, 0xdd8866, new THREE.Vector3(0, -1, p4Dist), p4Vel);
-            bodies.push(p4);
-            
-            updateUICount();
-        }
-        
-        // --- Spawn an asteroid with random position and velocity ---
-        function spawnAsteroid() {
-            const star = bodies[0];
-            if (!star) return;
-            const dist = 12 + Math.random() * 20;
-            const angle = Math.random() * Math.PI * 2;
-            const x = Math.cos(angle) * dist;
-            const z = Math.sin(angle) * dist;
-            const y = (Math.random() - 0.5) * 5;
-            const pos = new THREE.Vector3(x, y, z);
-            // Velocity: tangential + random perturbation
-            const directionToStar = new THREE.Vector3().subVectors(star.pos, pos).normalize();
-            const tangent = new THREE.Vector3(-directionToStar.z, 0, directionToStar.x);
-            const orbitalSpeed = Math.sqrt((G * star.mass) / dist);
-            const vel = tangent.multiplyScalar(orbitalSpeed * (0.8 + Math.random() * 0.6));
-            vel.y += (Math.random() - 0.5) * 1.5;
-            const mass = 0.6 + Math.random() * 1.2;
-            const radius = 0.25 + Math.random() * 0.2;
-            const color = 0xaa8866;
-            const asteroid = new Body("Asteroid", mass, radius, color, pos, vel);
-            bodies.push(asteroid);
-            updateUICount();
-        }
-        
-        function updateUICount() {
-            document.getElementById('bodyCount').innerHTML = `Bodies: ${bodies.length}`;
-        }
-        
-        // --- Reset simulation ---
-        function resetSimulation() {
-            initSystem();
-        }
-        
-        // --- UI event binding ---
-        document.getElementById('gravitySlider').addEventListener('input', (e) => {
-            G = parseFloat(e.target.value);
-            document.getElementById('gVal').innerText = G.toFixed(2);
-        });
-        document.getElementById('timeSlider').addEventListener('input', (e) => {
-            timeScale = parseFloat(e.target.value);
-            document.getElementById('timeVal').innerText = timeScale.toFixed(2);
-        });
-        document.getElementById('spawnBtn').addEventListener('click', () => spawnAsteroid());
-        document.getElementById('resetBtn').addEventListener('click', () => resetSimulation());
-        
-        // --- Animation loop with fixed timestep for physics stability ---
-        let lastTime = performance.now();
-        let accumulator = 0;
-        const physicsStep = 1 / 60; // 60 Hz physics
-        
-        function animate() {
-            const now = performance.now();
-            let dt = Math.min(0.033, (now - lastTime) / 1000);
-            lastTime = now;
-            accumulator += dt;
-            
-            // Run physics at fixed steps to keep integration stable
-            while (accumulator >= physicsStep) {
-                updatePhysics(physicsStep);
-                accumulator -= physicsStep;
-            }
-            
-            // Update camera controls
+
             controls.update();
-            
-            // Rotate star for visual effect
-            if (bodies[0]) bodies[0].mesh.rotation.y += 0.01;
-            
-            // Slight star glow pulse
-            const starMesh = bodies[0]?.mesh;
-            if (starMesh && starMesh.material) {
-                const intensity = 0.6 + Math.sin(Date.now() * 0.003) * 0.1;
-                starMesh.material.emissiveIntensity = intensity;
-            }
-            
-            effectComposer.render();
-            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
         }
-        
-        // --- Start simulation ---
-        initSystem();
-        animate();
-        
-        // Handle window resize
+
+        // Handle resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            effectComposer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
-        
-        console.log('3D N-Body Gravity Engine started | Real Newtonian physics | Orbital trails visible');
+
+        animate();
     </script>
 </body>
 </html>
