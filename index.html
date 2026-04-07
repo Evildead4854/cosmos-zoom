@@ -2,231 +2,476 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>True Scale N-Body Universe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Scale of the Universe | 2D Interactive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #00ffcc; }
-        #ui { position: absolute; top: 20px; left: 20px; background: rgba(0,20,20,0.8); padding: 20px; border: 1px solid #00ffcc; pointer-events: none; }
-        h1 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; }
-        p { margin: 5px 0; font-size: 12px; }
-        .controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
-        button { background: #002222; border: 1px solid #00ffcc; color: #00ffcc; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #00ffcc; color: #000; }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            font-family: 'Space Grotesk', sans-serif;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(10, 10, 25, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 24px 28px 32px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 2px;
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #88aaff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .sub {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            letter-spacing: 1px;
+            margin-bottom: 35px;
+        }
+        /* main visual area */
+        .visual-area {
+            background: rgba(0,0,0,0.4);
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .object-card {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .object-name {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #aaffff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .object-size {
+            font-size: 1rem;
+            font-family: monospace;
+            color: #aaf;
+            margin-top: 6px;
+        }
+        .object-desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            max-width: 400px;
+            margin: 8px auto 0;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            background: radial-gradient(circle, #0a0a1a, #000000);
+            border-radius: 32px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            width: 100%;
+            height: auto;
+            border: 1px solid rgba(0,242,255,0.2);
+        }
+        /* slider & ruler */
+        .ruler-container {
+            margin: 25px 0 20px;
+            position: relative;
+        }
+        .scale-ruler {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            margin-bottom: 5px;
+        }
+        .ruler-tick {
+            font-size: 0.6rem;
+            color: #8af;
+            text-align: center;
+            flex: 1;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            background: linear-gradient(90deg, #ff44ff, #44aaff, #ffaa44);
+            height: 4px;
+            border-radius: 4px;
+            -webkit-appearance: none;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #0af;
+            box-shadow: 0 0 8px #0af;
+            cursor: pointer;
+        }
+        .legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.7rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 18px;
+        }
+        .legend span {
+            background: rgba(0,0,0,0.4);
+            padding: 4px 10px;
+            border-radius: 40px;
+        }
+        button {
+            background: rgba(0,242,255,0.15);
+            border: 1px solid rgba(0,242,255,0.5);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #0af;
+            color: #000;
+            border-color: #0af;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 16px; }
+            .object-name { font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
-    <div id="ui">
-        <h1>System Status: N-Body Active</h1>
-        <p>Simulation Speed: 1.5 Days / Frame</p>
-        <p>Integration: Semi-Implicit Euler</p>
-        <p id="target-info">Target: SYSTEM CENTER</p>
-        <p style="color: #ff5555; margin-top: 15px;">WARNING: TRUE SCALE.<br>Planets are invisible from a distance.<br>Use buttons to lock camera.</p>
+<div class="container">
+    <h1>✦ SCALE OF THE UNIVERSE ✦</h1>
+    <div class="sub">from quantum foam to the cosmic horizon — logarithmic journey</div>
+
+    <div class="visual-area">
+        <div class="object-card">
+            <div class="object-name" id="objectName">Planck Length</div>
+            <div class="object-size" id="objectSize">1.6 × 10⁻³⁵ m</div>
+            <div class="object-desc" id="objectDesc">The smallest meaningful length — quantum foam</div>
+        </div>
+        <canvas id="scaleCanvas" width="800" height="280" style="width:100%; height:auto; max-width:800px; aspect-ratio:800/280"></canvas>
     </div>
-    
+
+    <div class="ruler-container">
+        <div class="scale-ruler" id="rulerLabels"></div>
+        <input type="range" id="scaleSlider" min="0" max="100" value="45" step="1">
+    </div>
     <div class="controls">
-        <button onclick="setTarget('Sun')">Sun</button>
-        <button onclick="setTarget('Mercury')">Mercury</button>
-        <button onclick="setTarget('Venus')">Venus</button>
-        <button onclick="setTarget('Earth')">Earth</button>
-        <button onclick="setTarget('Mars')">Mars</button>
-        <button onclick="setTarget('Jupiter')">Jupiter</button>
+        <button id="btnQuantum">⚛️ Quantum</button>
+        <button id="btnHuman">🧬 Human</button>
+        <button id="btnEarth">🌍 Earth</button>
+        <button id="btnSolar">☀️ Solar System</button>
+        <button id="btnGalaxy">🌀 Galaxy</button>
+        <button id="btnUniverse">🌌 Universe</button>
     </div>
+    <div class="legend">
+        <span>⬅️ Smaller (Quantum realm)</span>
+        <span>✨ Drag slider → explore scales ✨</span>
+        <span>Larger (Cosmic web) ➡️</span>
+    </div>
+</div>
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+<script>
+    // ---------- SCALE DATA: from 10^-35 to 10^27 meters (logarithmic) ----------
+    // Each object: name, size in meters (scientific string), exponent (log10), description, color hint
+    const scaleItems = [
+        { name: "Planck Length", size: "1.6 × 10⁻³⁵ m", exp: -35, desc: "Quantum foam, the fabric of spacetime", color: "#ff66cc" },
+        { name: "Neutrino", size: "10⁻²⁴ m", exp: -24, desc: "Ghost particle, passes through matter", color: "#ff99ff" },
+        { name: "Quark", size: "10⁻¹⁸ m", exp: -18, desc: "Fundamental constituent of matter", color: "#cc88ff" },
+        { name: "Proton", size: "1.7 × 10⁻¹⁵ m", exp: -15, desc: "Nuclear particle, inside atoms", color: "#aa88ff" },
+        { name: "Hydrogen Atom", size: "1.0 × 10⁻¹⁰ m", exp: -10, desc: "Electron cloud around nucleus", color: "#88aaff" },
+        { name: "DNA Helix", size: "2 × 10⁻⁹ m", exp: -9, desc: "Blueprint of life", color: "#66ffaa" },
+        { name: "Virus", size: "1 × 10⁻⁷ m", exp: -7, desc: "Invisible invader", color: "#88ff88" },
+        { name: "Red Blood Cell", size: "8 × 10⁻⁶ m", exp: -5, desc: "Oxygen carrier", color: "#ff8866" },
+        { name: "Ant", size: "5 × 10⁻³ m", exp: -2.3, desc: "Tiny insect", color: "#ffaa66" },
+        { name: "Human", size: "1.7 m", exp: 0, desc: "You are here", color: "#ffffff" },
+        { name: "Blue Whale", size: "30 m", exp: 1.5, desc: "Largest animal", color: "#88ccff" },
+        { name: "Mount Everest", size: "8.8 km", exp: 3.9, desc: "Earth's highest peak", color: "#aaffcc" },
+        { name: "Earth", size: "12,742 km", exp: 7.1, desc: "Our home planet", color: "#44aaff" },
+        { name: "Jupiter", size: "139,820 km", exp: 8.1, desc: "Gas giant", color: "#ffaa88" },
+        { name: "The Sun", size: "1.39 × 10⁶ km", exp: 9.1, desc: "Our star, fusion reactor", color: "#ffaa44" },
+        { name: "Solar System", size: "287 billion km", exp: 12.4, desc: "Sun and planetary family", color: "#ffdd88" },
+        { name: "Light Year", size: "9.46 trillion km", exp: 15.9, desc: "Distance light travels in a year", color: "#ffccaa" },
+        { name: "Orion Nebula", size: "24 light-years", exp: 17.4, desc: "Star nursery", color: "#ff88cc" },
+        { name: "Milky Way", size: "100,000 ly", exp: 21, desc: "Our galaxy", color: "#cc99ff" },
+        { name: "Local Group", size: "10 million ly", exp: 23, desc: "Galactic neighborhood", color: "#aa88ff" },
+        { name: "Virgo Supercluster", size: "110 million ly", exp: 24, desc: "Galactic filament", color: "#88aaff" },
+        { name: "Observable Universe", size: "93 billion ly", exp: 26.9, desc: "The cosmic horizon", color: "#3366ff" }
+    ];
+
+    // map exponent range -35 .. 27 to slider 0..100
+    const minExp = -35;
+    const maxExp = 27;
+    function expToSlider(exp) {
+        return ((exp - minExp) / (maxExp - minExp)) * 100;
+    }
+    function sliderToExp(val) {
+        return minExp + (val / 100) * (maxExp - minExp);
+    }
+
+    // find closest item by exponent
+    function getItemByExponent(exp) {
+        let closest = scaleItems[0];
+        let minDiff = Math.abs(scaleItems[0].exp - exp);
+        for (let i = 1; i < scaleItems.length; i++) {
+            const diff = Math.abs(scaleItems[i].exp - exp);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closest = scaleItems[i];
             }
         }
-    </script>
+        return closest;
+    }
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    // DOM elements
+    const slider = document.getElementById('scaleSlider');
+    const objectNameSpan = document.getElementById('objectName');
+    const objectSizeSpan = document.getElementById('objectSize');
+    const objectDescSpan = document.getElementById('objectDesc');
+    const canvas = document.getElementById('scaleCanvas');
+    const ctx = canvas.getContext('2d');
 
-        // --- 1. ENGINE SETUP (Logarithmic Depth is MANDATORY for Space) ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.0000001, 10000);
+    // resize canvas resolution (keep crisp)
+    function resizeCanvas() {
+        const container = canvas.parentElement;
+        const width = Math.min(800, container.clientWidth - 20);
+        canvas.width = width;
+        canvas.height = 280;
+        drawCanvas();
+    }
+    window.addEventListener('resize', () => resizeCanvas());
+    
+    // draw logarithmic ruler and a marker + visual representation of current object size relative to human scale?
+    // Draw a horizontal "scale bar" with ticks at important exponents, and a glowing dot for current object.
+    function drawCanvas() {
+        if (!ctx) return;
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
         
-        const renderer = new THREE.WebGLRenderer({ 
-            antialias: true, 
-            logarithmicDepthBuffer: true // THE SECRET SAUCE FOR UNIVERSE SCALES
+        // background gradient
+        const grad = ctx.createLinearGradient(0, 0, w, 0);
+        grad.addColorStop(0, '#0a0a2a');
+        grad.addColorStop(1, '#010118');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+        
+        // draw ruler line
+        const yLine = h - 70;
+        ctx.beginPath();
+        ctx.moveTo(30, yLine);
+        ctx.lineTo(w - 30, yLine);
+        ctx.strokeStyle = '#88aaff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // draw ticks for key exponents: -35, -20, -10, 0, 10, 20, 27
+        const keyExps = [-35, -20, -10, 0, 10, 20, 27];
+        keyExps.forEach(exp => {
+            const x = 30 + ((exp - minExp) / (maxExp - minExp)) * (w - 60);
+            ctx.beginPath();
+            ctx.moveTo(x, yLine - 6);
+            ctx.lineTo(x, yLine + 6);
+            ctx.strokeStyle = '#aaf';
+            ctx.stroke();
+            // label
+            let label = '';
+            if (exp === -35) label = 'Planck';
+            else if (exp === -20) label = '10⁻²⁰';
+            else if (exp === -10) label = 'Atom';
+            else if (exp === 0) label = 'Human';
+            else if (exp === 10) label = 'Star';
+            else if (exp === 20) label = 'Galaxy';
+            else if (exp === 27) label = 'Universe';
+            ctx.fillStyle = '#ccddff';
+            ctx.font = '10px "Space Grotesk", monospace';
+            ctx.fillText(label, x - 20, yLine - 8);
         });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-
-        // --- 2. ASTROPHYSICS CONSTANTS ---
-        // We use the Astronomical System of Units to prevent floating point explosion
-        // Mass = Solar Masses (Sun = 1)
-        // Distance = Astronomical Units (1 AU = 149.6 million km)
-        // Time = Years
-        const G = 39.478; // Gravitational Constant in AU^3 / (M_sun * yr^2)
-        const dt = 0.004; // Time step per frame (~1.46 days)
-
-        const bodies = [];
-        const trails = [];
-
-        // --- 3. PROCEDURAL GENERATORS ---
-        function createStarfield() {
-            const geo = new THREE.BufferGeometry();
-            const pos = new Float32Array(30000 * 3);
-            for(let i=0; i<90000; i++) pos[i] = (Math.random() - 0.5) * 2000;
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({color: 0xffffff, size: 0.05, transparent: true, opacity: 0.6});
-            scene.add(new THREE.Points(geo, mat));
+        
+        // get current exponent from slider
+        const sliderVal = parseFloat(slider.value);
+        const currentExp = sliderToExp(sliderVal);
+        const currentItem = getItemByExponent(currentExp);
+        
+        // draw glowing marker on ruler
+        const markerX = 30 + ((currentExp - minExp) / (maxExp - minExp)) * (w - 60);
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = currentItem.color;
+        ctx.beginPath();
+        ctx.arc(markerX, yLine, 8, 0, Math.PI * 2);
+        ctx.fillStyle = currentItem.color;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(markerX, yLine, 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // ---- visual metaphor: draw a circle representing relative "size impression" but scaled logarithmically (just artistic)
+        const centerX = w / 2;
+        const centerY = h / 2 - 15;
+        // map exponent to radius: smaller exponent -> tiny radius, larger -> huge, but clamped
+        let radius = 20;
+        if (currentExp < -20) radius = 6;
+        else if (currentExp < -5) radius = 12;
+        else if (currentExp < 0) radius = 18;
+        else if (currentExp < 5) radius = 28;
+        else if (currentExp < 10) radius = 38;
+        else if (currentExp < 15) radius = 50;
+        else radius = 70;
+        // make it look like a stylized object
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = currentItem.color;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = currentItem.color + '40';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.6, 0, Math.PI * 2);
+        ctx.fillStyle = currentItem.color + 'aa';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // label inside
+        ctx.font = 'bold 12px "Space Grotesk"';
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 0;
+        ctx.fillText('⚛', centerX-6, centerY+5);
+        
+        // add comparison text: "billions of times smaller/larger"
+        let comparison = '';
+        if (currentExp < -10) comparison = '🔬 billions of times smaller than a human hair';
+        else if (currentExp < 0) comparison = '🧬 microscopic realm';
+        else if (currentExp < 5) comparison = '📏 human to mountain scale';
+        else if (currentExp < 12) comparison = '🌍 planetary to stellar scale';
+        else if (currentExp < 20) comparison = '🌀 galactic scale — unimaginable distances';
+        else comparison = '🌌 cosmic scale — the observable universe';
+        ctx.font = '10px monospace';
+        ctx.fillStyle = '#bbccff';
+        ctx.fillText(comparison, centerX - 130, yLine - 25);
+    }
+    
+    // update UI based on slider value
+    function updateFromSlider() {
+        const val = parseFloat(slider.value);
+        const exp = sliderToExp(val);
+        const item = getItemByExponent(exp);
+        objectNameSpan.innerText = item.name;
+        objectSizeSpan.innerText = item.size;
+        objectDescSpan.innerText = item.desc;
+        drawCanvas();
+        // also update slider background? just visual
+    }
+    
+    // jump to specific item index
+    function jumpToItem(index) {
+        if (index >= 0 && index < scaleItems.length) {
+            const targetExp = scaleItems[index].exp;
+            const sliderVal = expToSlider(targetExp);
+            slider.value = sliderVal;
+            updateFromSlider();
         }
-        createStarfield();
-
-        const texLoader = new THREE.TextureLoader();
-
-        // Object Factory
-        function createCelestialBody(name, mass, radiusAU, distAU, color, hasLight = false) {
-            // High-segment sphere for crisp rendering up close
-            const geo = new THREE.SphereGeometry(radiusAU, 64, 64);
-            let mat;
-            
-            if(hasLight) {
-                mat = new THREE.MeshBasicMaterial({ color: color });
-                const light = new THREE.PointLight(0xffffff, 1.5, 0, 0); // Infinite range
-                scene.add(light);
-            } else {
-                mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.8 });
-            }
-
-            const mesh = new THREE.Mesh(geo, mat);
-            
-            // Calculate orbital velocity for circular orbit (v = sqrt(G*M/r))
-            // This is just the starting push. Gravity takes over immediately.
-            let velZ = distAU > 0 ? Math.sqrt(G * 1.0 / distAU) : 0;
-
-            mesh.position.set(distAU, 0, 0);
-            scene.add(mesh);
-
-            // Create Trail
-            const trailGeo = new THREE.BufferGeometry();
-            const trailMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3 });
-            const trail = new THREE.Line(trailGeo, trailMat);
-            scene.add(trail);
-
-            const body = {
-                name: name,
-                mesh: mesh,
-                mass: mass,
-                radius: radiusAU,
-                vel: new THREE.Vector3(0, 0, velZ),
-                acc: new THREE.Vector3(0, 0, 0),
-                path: [], // Store history for trail
-                trailLine: trail
-            };
-
-            bodies.push(body);
-            return body;
-        }
-
-        // --- 4. THE REAL SOLAR SYSTEM DATA ---
-        scene.add(new THREE.AmbientLight(0x222222));
-
-        // Sun: Mass = 1, Radius = 696,000 km (0.00465 AU)
-        createCelestialBody("Sun", 1.0, 0.00465, 0, 0xffddaa, true);
-
-        // Mercury: Mass = 1.65e-7, Radius = 2,439 km, Dist = 0.387 AU
-        createCelestialBody("Mercury", 1.65e-7, 0.0000163, 0.387, 0xaaaaaa);
-
-        // Venus: Mass = 2.44e-6, Radius = 6,051 km, Dist = 0.723 AU
-        createCelestialBody("Venus", 2.44e-6, 0.0000404, 0.723, 0xffcc88);
-
-        // Earth: Mass = 3.00e-6, Radius = 6,371 km, Dist = 1.0 AU
-        createCelestialBody("Earth", 3.00e-6, 0.0000425, 1.0, 0x4488ff);
-
-        // Mars: Mass = 3.21e-7, Radius = 3,389 km, Dist = 1.524 AU
-        createCelestialBody("Mars", 3.21e-7, 0.0000226, 1.524, 0xff4422);
-
-        // Jupiter: Mass = 0.00095, Radius = 69,911 km, Dist = 5.204 AU
-        createCelestialBody("Jupiter", 0.00095, 0.000467, 5.204, 0xccaa88);
-
-        // --- 5. CAMERA TARGETING SYSTEM ---
-        let targetBody = null;
-        camera.position.set(0, 2, 6); // Start looking at inner solar system
-
-        window.setTarget = function(name) {
-            const body = bodies.find(b => b.name === name);
-            if (body) {
-                targetBody = body;
-                document.getElementById('target-info').innerText = "Target: " + name;
-                // Move camera close to the planet based on its true size
-                const offset = body.radius * 5; 
-                camera.position.copy(body.mesh.position).add(new THREE.Vector3(offset, offset, offset));
-            }
-        };
-
-        // --- 6. THE PHYSICS ENGINE (N-Body Loop) ---
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Step 1: Calculate Gravity between ALL objects
-            for (let i = 0; i < bodies.length; i++) {
-                let bodyA = bodies[i];
-                let force = new THREE.Vector3(0, 0, 0);
-
-                for (let j = 0; j < bodies.length; j++) {
-                    if (i === j) continue;
-                    let bodyB = bodies[j];
-
-                    // Find distance and direction
-                    let diff = new THREE.Vector3().subVectors(bodyB.mesh.position, bodyA.mesh.position);
-                    let distSq = diff.lengthSq();
-                    
-                    // F = G * (m1 * m2) / r^2
-                    let fMag = (G * bodyA.mass * bodyB.mass) / distSq;
-                    
-                    // Add force vector
-                    force.add(diff.normalize().multiplyScalar(fMag));
-                }
-                // Convert force to acceleration (a = F/m)
-                bodyA.acc.copy(force.divideScalar(bodyA.mass));
-            }
-
-            // Step 2: Apply Acceleration to Velocity, and Velocity to Position (Euler Integration)
-            for (let i = 0; i < bodies.length; i++) {
-                let body = bodies[i];
-                
-                // If it's the Sun, keep it anchored for viewing stability (optional, but good for this scale)
-                if (body.name === "Sun") continue; 
-
-                body.vel.addScaledVector(body.acc, dt);
-                body.mesh.position.addScaledVector(body.vel, dt);
-
-                // Update Trails (Record position every few frames)
-                if (Math.random() > 0.8) {
-                    body.path.push(body.mesh.position.clone());
-                    if (body.path.length > 300) body.path.shift(); // Max trail length
-                    body.trailLine.geometry.setFromPoints(body.path);
-                }
-            }
-
-            // Step 3: Handle Camera Focus
-            if (targetBody) {
-                controls.target.copy(targetBody.mesh.position);
-                // Dynamically adjust camera zoom speed based on object scale
-                controls.minDistance = targetBody.radius * 1.5;
-            }
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-
-        // Handle resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    
+    // buttons
+    document.getElementById('btnQuantum').addEventListener('click', () => jumpToItem(0));   // Planck
+    document.getElementById('btnHuman').addEventListener('click', () => {
+        const humanIdx = scaleItems.findIndex(i => i.name === "Human");
+        jumpToItem(humanIdx);
+    });
+    document.getElementById('btnEarth').addEventListener('click', () => {
+        const earthIdx = scaleItems.findIndex(i => i.name === "Earth");
+        jumpToItem(earthIdx);
+    });
+    document.getElementById('btnSolar').addEventListener('click', () => {
+        const solarIdx = scaleItems.findIndex(i => i.name === "Solar System");
+        jumpToItem(solarIdx);
+    });
+    document.getElementById('btnGalaxy').addEventListener('click', () => {
+        const galaxyIdx = scaleItems.findIndex(i => i.name === "Milky Way");
+        jumpToItem(galaxyIdx);
+    });
+    document.getElementById('btnUniverse').addEventListener('click', () => {
+        const uniIdx = scaleItems.findIndex(i => i.name === "Observable Universe");
+        jumpToItem(uniIdx);
+    });
+    
+    slider.addEventListener('input', updateFromSlider);
+    
+    // build ruler labels under slider (simple)
+    const rulerDiv = document.getElementById('rulerLabels');
+    function buildRulerLabels() {
+        rulerDiv.innerHTML = '';
+        const markers = [
+            { exp: -35, label: '⚛️ Planck' },
+            { exp: -10, label: 'Atom' },
+            { exp: 0, label: 'Human' },
+            { exp: 7.1, label: 'Earth' },
+            { exp: 12.4, label: 'Solar' },
+            { exp: 21, label: 'Galaxy' },
+            { exp: 26.9, label: 'Universe' }
+        ];
+        markers.forEach(m => {
+            const pos = ((m.exp - minExp) / (maxExp - minExp)) * 100;
+            const tick = document.createElement('div');
+            tick.className = 'ruler-tick';
+            tick.style.position = 'relative';
+            tick.style.left = `calc(${pos}% - 30px)`;
+            tick.style.width = '60px';
+            tick.style.textAlign = 'center';
+            tick.innerText = m.label;
+            rulerDiv.appendChild(tick);
         });
-
-        animate();
-    </script>
+    }
+    buildRulerLabels();
+    
+    // initial draw
+    resizeCanvas();
+    updateFromSlider();
+    
+    // optional: subtle animation, show a small intro
+    console.log('Scale of the Universe — 2D interactive | From 10⁻³⁵ to 10²⁷ meters');
+</script>
 </body>
 </html>
