@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Universe Simulator | Quantum to Cosmos</title>
+    <title>Universe Engine | Quantum to Cosmos - God Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -11,7 +11,7 @@
             overflow: hidden;
             font-family: 'Space Grotesk', sans-serif;
         }
-        #info {
+        #ui {
             position: fixed;
             top: 20px;
             left: 20px;
@@ -19,28 +19,16 @@
             backdrop-filter: blur(10px);
             padding: 15px 25px;
             border-radius: 15px;
-            border-left: 3px solid #00f2ff;
+            border-left: 4px solid #00f2ff;
             z-index: 100;
             pointer-events: none;
             color: white;
-            max-width: 300px;
+            max-width: 320px;
         }
-        .title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: #00f2ff;
-            margin-bottom: 5px;
-        }
-        .object-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 5px 0;
-        }
-        .details {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-        .controls-panel {
+        .category { font-size: 0.7rem; letter-spacing: 2px; color: #00f2ff; }
+        .name { font-size: 1.6rem; font-weight: 700; margin: 5px 0; }
+        .detail { font-size: 0.8rem; opacity: 0.8; }
+        .controls {
             position: fixed;
             bottom: 20px;
             left: 50%;
@@ -49,59 +37,75 @@
             gap: 12px;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 50px;
             z-index: 100;
             pointer-events: auto;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         button {
             background: transparent;
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 30px;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.8rem;
+            transition: 0.2s;
+            font-size: 0.7rem;
         }
-        button:hover {
-            background: #00f2ff;
-            color: black;
-            border-color: #00f2ff;
+        button:hover { background: #00f2ff; color: black; border-color: #00f2ff; }
+        .slider-container {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            pointer-events: auto;
+            color: white;
+            font-size: 0.7rem;
         }
+        input { width: 150px; cursor: pointer; }
         .instruction {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 12px;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #aaa;
             pointer-events: none;
-            z-index: 100;
         }
-        @media (max-width: 768px) {
-            .object-name { font-size: 1rem; }
-            button { padding: 4px 10px; font-size: 0.6rem; }
-            .controls-panel { gap: 6px; padding: 8px 12px; }
+        @media (max-width: 700px) {
+            .name { font-size: 1rem; }
+            .controls { gap: 6px; padding: 6px 12px; }
+            button { padding: 4px 8px; font-size: 0.6rem; }
         }
     </style>
 </head>
 <body>
-    <div id="info">
-        <div class="title">✦ CURRENT VIEW ✦</div>
-        <div class="object-name" id="objName">Planck Length</div>
-        <div class="details" id="objDetails">The smallest measurable scale</div>
+    <div id="ui">
+        <div class="category" id="category">⚛️ QUANTUM REALM</div>
+        <div class="name" id="name">Planck Scale</div>
+        <div class="detail" id="detail">Quantum foam | Space-time fluctuations</div>
     </div>
-    <div class="controls-panel">
+    <div class="slider-container">
+        <span>🐌 TIME SPEED</span>
+        <input type="range" id="timeSpeed" min="0" max="2" step="0.01" value="0.5">
+    </div>
+    <div class="controls">
         <button id="btnQuantum">⚛️ Quantum</button>
+        <button id="btnAtom">🧬 Atom</button>
         <button id="btnHuman">👤 Human</button>
         <button id="btnEarth">🌍 Earth</button>
-        <button id="btnSolar">🌞 Solar System</button>
+        <button id="btnSolar">☀️ Solar</button>
         <button id="btnGalaxy">🌀 Galaxy</button>
         <button id="btnUniverse">🌌 Universe</button>
+        <button id="btnBlackHole">🕳️ Black Hole</button>
     </div>
     <div class="instruction">🖱️ Drag to rotate | Scroll to zoom through scales</div>
 
@@ -120,30 +124,30 @@
         import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
         import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-
-        // --- Setup Scene ---
+        
+        // --- Setup ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x010118);
-        scene.fog = new THREE.FogExp2(0x010118, 0.00003);
-
+        scene.fog = new THREE.FogExp2(0x010118, 0.00002);
+        
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 1e9);
-        camera.position.set(0, 5, 15);
-
+        camera.position.set(0, 2, 12);
+        
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.shadowMap.enabled = true;
         document.body.appendChild(renderer.domElement);
-
+        
         // Post-processing bloom
         const renderScene = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.8, 0.4, 0.2);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.6, 0.3, 0.2);
         bloomPass.threshold = 0.1;
         bloomPass.strength = 0.5;
         const effectComposer = new EffectComposer(renderer);
         effectComposer.addPass(renderScene);
         effectComposer.addPass(bloomPass);
-
+        
         // Controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
@@ -153,339 +157,387 @@
         controls.zoomSpeed = 1.2;
         controls.rotateSpeed = 0.8;
         controls.enablePan = true;
-        controls.panSpeed = 0.5;
         
         // --- Lighting ---
-        const ambientLight = new THREE.AmbientLight(0x111122);
-        scene.add(ambientLight);
-        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.2);
-        sunLight.position.set(10, 20, 5);
-        sunLight.castShadow = true;
-        scene.add(sunLight);
+        const ambient = new THREE.AmbientLight(0x111122);
+        scene.add(ambient);
+        const mainLight = new THREE.DirectionalLight(0xffeedd, 1);
+        mainLight.position.set(5, 10, 7);
+        scene.add(mainLight);
         const backLight = new THREE.PointLight(0x4466ff, 0.4);
         backLight.position.set(-5, 0, -10);
         scene.add(backLight);
-        const fillLight = new THREE.PointLight(0xffaa66, 0.3);
-        fillLight.position.set(5, 3, 8);
-        scene.add(fillLight);
-
-        // --- Starfield Background (distant stars) ---
-        const starCount = 6000;
-        const starGeometry = new THREE.BufferGeometry();
-        const starPositions = new Float32Array(starCount * 3);
-        for (let i = 0; i < starCount; i++) {
-            starPositions[i*3] = (Math.random() - 0.5) * 8000;
-            starPositions[i*3+1] = (Math.random() - 0.5) * 5000;
-            starPositions[i*3+2] = (Math.random() - 0.5) * 3000 - 1000;
-        }
-        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 });
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
-
-        // --- Helper: Create a planet with basic texture ---
-        function createPlanet(radius, color, detail = 64, emissive = 0x000000, emissiveIntensity = 0) {
-            const geometry = new THREE.SphereGeometry(radius, detail, detail);
-            const material = new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity, roughness: 0.5, metalness: 0.1 });
-            const planet = new THREE.Mesh(geometry, material);
-            planet.castShadow = true;
-            planet.receiveShadow = false;
-            return planet;
-        }
-
-        // --- Detailed Earth (with high-res textures from Three.js examples) ---
-        const earthGeometry = new THREE.SphereGeometry(1, 128, 128);
-        const textureLoader = new THREE.TextureLoader();
-        const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-        const earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-        const earthNormalMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-        const cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
         
-        const earthMaterial = new THREE.MeshPhongMaterial({
-            map: earthMap,
-            specularMap: earthSpecularMap,
-            specular: new THREE.Color('grey'),
-            shininess: 5,
-            normalMap: earthNormalMap
-        });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        // --- Helper: create a glow sphere ---
+        function addGlowSphere(radius, color, intensity, parent) {
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: intensity, blending: THREE.AdditiveBlending });
+            const glow = new THREE.Mesh(geometry, material);
+            (parent || scene).add(glow);
+            return glow;
+        }
         
-        // Clouds layer
-        const cloudGeometry = new THREE.SphereGeometry(1.01, 128, 128);
-        const cloudMaterial = new THREE.MeshPhongMaterial({
-            map: cloudMap,
-            transparent: true,
-            opacity: 0.15
-        });
-        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-        earth.add(clouds);
+        // ========== 1. QUANTUM REALM (Planck scale foam) ==========
+        const quantumGroup = new THREE.Group();
+        const foamParticleCount = 2000;
+        const foamGeo = new THREE.BufferGeometry();
+        const foamPos = [];
+        for (let i = 0; i < foamParticleCount; i++) {
+            foamPos.push((Math.random() - 0.5) * 2.5, (Math.random() - 0.5) * 2.5, (Math.random() - 0.5) * 2.5);
+        }
+        foamGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(foamPos), 3));
+        const foamMat = new THREE.PointsMaterial({ color: 0xff66ff, size: 0.02, transparent: true, blending: THREE.AdditiveBlending });
+        const foamPoints = new THREE.Points(foamGeo, foamMat);
+        quantumGroup.add(foamPoints);
+        // Add a fluctuating core
+        const quantumCore = new THREE.Mesh(
+            new THREE.SphereGeometry(0.2, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xff88ff, emissive: 0xff44ff, emissiveIntensity: 0.8 })
+        );
+        quantumGroup.add(quantumCore);
+        scene.add(quantumGroup);
+        
+        // ========== 2. ATOM (Hydrogen with electron cloud) ==========
+        const atomGroup = new THREE.Group();
+        const nucleus = new THREE.Mesh(new THREE.SphereGeometry(0.15, 32, 32), new THREE.MeshStandardMaterial({ color: 0xff6666, emissive: 0x442222 }));
+        atomGroup.add(nucleus);
+        // Electron cloud (volumetric fog sphere)
+        const cloudGeo = new THREE.SphereGeometry(0.8, 64, 64);
+        const cloudMat = new THREE.MeshPhongMaterial({ color: 0x88aaff, transparent: true, opacity: 0.15, emissive: 0x224466 });
+        const electronCloud = new THREE.Mesh(cloudGeo, cloudMat);
+        atomGroup.add(electronCloud);
+        // Orbiting particle (probabilistic)
+        const electronOrb = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 16), new THREE.MeshStandardMaterial({ color: 0x88ddff, emissive: 0x2288ff }));
+        atomGroup.add(electronOrb);
+        scene.add(atomGroup);
+        
+        // ========== 3. HUMAN SCALE (simple DNA double helix) ==========
+        const humanGroup = new THREE.Group();
+        const helixPoints = [];
+        for (let i = 0; i <= 100; i++) {
+            const t = i / 100;
+            const angle = t * Math.PI * 4;
+            const y = (t - 0.5) * 2;
+            helixPoints.push(new THREE.Vector3(Math.cos(angle) * 0.3, y, Math.sin(angle) * 0.3));
+            helixPoints.push(new THREE.Vector3(Math.cos(angle + Math.PI) * 0.3, y, Math.sin(angle + Math.PI) * 0.3));
+        }
+        const helixGeo = new THREE.BufferGeometry().setFromPoints(helixPoints);
+        const helixMat = new THREE.LineBasicMaterial({ color: 0x66ff66 });
+        const dna = new THREE.Line(helixGeo, helixMat);
+        humanGroup.add(dna);
+        scene.add(humanGroup);
+        
+        // ========== 4. EARTH (detailed with layers, magnetic field) ==========
+        const earthGroup = new THREE.Group();
+        // Load Earth textures from Three.js examples
+        const texLoader = new THREE.TextureLoader();
+        const earthMap = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+        const earthSpec = texLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+        const earthNormal = texLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+        const cloudMap = texLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+        
+        const earthMat = new THREE.MeshPhongMaterial({ map: earthMap, specularMap: earthSpec, specular: new THREE.Color('grey'), shininess: 5, normalMap: earthNormal });
+        const earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 128), earthMat);
+        earthGroup.add(earthMesh);
+        
+        // Clouds
+        const cloudMatCloud = new THREE.MeshPhongMaterial({ map: cloudMap, transparent: true, opacity: 0.15 });
+        const cloudsMesh = new THREE.Mesh(new THREE.SphereGeometry(1.01, 128, 128), cloudMatCloud);
+        earthGroup.add(cloudsMesh);
         
         // Atmosphere glow
-        const atmGeometry = new THREE.SphereGeometry(1.03, 64, 64);
-        const atmMaterial = new THREE.MeshPhongMaterial({ color: 0x44aaff, transparent: true, opacity: 0.08 });
-        const atmosphere = new THREE.Mesh(atmGeometry, atmMaterial);
-        earth.add(atmosphere);
+        const atmGlow = addGlowSphere(1.05, 0x44aaff, 0.08, earthGroup);
         
-        scene.add(earth);
-
-        // --- Solar System planets (relative sizes and orbits, distances scaled logarithmically for visibility) ---
-        const planets = [];
-        const planetData = [
-            { name: "Mercury", color: 0xbc9a6c, size: 0.38, distance: 4.5, speed: 0.025, detail: 64 },
-            { name: "Venus",   color: 0xe6b800, size: 0.95, distance: 6.0, speed: 0.018, detail: 64 },
-            { name: "Earth",   color: 0x2277ff, size: 1.0,  distance: 7.5, speed: 0.015, detail: 128, special: earth },
-            { name: "Mars",    color: 0xcc6644, size: 0.53, distance: 9.0, speed: 0.012, detail: 64 },
-            { name: "Jupiter", color: 0xd8a27a, size: 1.8,  distance: 14.0, speed: 0.007, detail: 96 },
-            { name: "Saturn",  color: 0xf0e2b6, size: 1.5,  distance: 17.0, speed: 0.005, detail: 96 },
-            { name: "Uranus",  color: 0xb0e0e6, size: 1.2,  distance: 20.0, speed: 0.004, detail: 80 },
-            { name: "Neptune", color: 0x4169e1, size: 1.15, distance: 23.0, speed: 0.003, detail: 80 }
+        // Magnetic field lines (torus knots)
+        const fieldPoints = [];
+        for (let i = 0; i <= 200; i++) {
+            const t = i / 200;
+            const angle = t * Math.PI * 2;
+            const r = 1.3;
+            fieldPoints.push(new THREE.Vector3(Math.cos(angle) * r, Math.sin(angle) * 0.5, Math.sin(angle) * r));
+        }
+        const fieldGeo = new THREE.BufferGeometry().setFromPoints(fieldPoints);
+        const fieldMat = new THREE.LineBasicMaterial({ color: 0x33aaff, transparent: true, opacity: 0.4 });
+        const fieldLine = new THREE.Line(fieldGeo, fieldMat);
+        earthGroup.add(fieldLine);
+        
+        scene.add(earthGroup);
+        
+        // ========== 5. SOLAR SYSTEM (planets, Sun, asteroid belt) ==========
+        const solarGroup = new THREE.Group();
+        // Sun (fusion core)
+        const sunMat = new THREE.MeshStandardMaterial({ color: 0xffaa44, emissive: 0xff4422, emissiveIntensity: 1.2 });
+        const sunMesh = new THREE.Mesh(new THREE.SphereGeometry(2.5, 128, 128), sunMat);
+        solarGroup.add(sunMesh);
+        addGlowSphere(2.7, 0xff8844, 0.3, solarGroup);
+        
+        // Planets data
+        const planetsData = [
+            { name: "Mercury", color: 0xbc9a6c, size: 0.25, dist: 4.2, speed: 0.025 },
+            { name: "Venus", color: 0xe6b800, size: 0.35, dist: 5.5, speed: 0.018 },
+            { name: "Mars", color: 0xcc6644, size: 0.3, dist: 7.0, speed: 0.015 },
+            { name: "Jupiter", color: 0xd8a27a, size: 0.8, dist: 11, speed: 0.008 },
+            { name: "Saturn", color: 0xf0e2b6, size: 0.7, dist: 13.5, speed: 0.006 },
+            { name: "Uranus", color: 0xb0e0e6, size: 0.55, dist: 16, speed: 0.005 },
+            { name: "Neptune", color: 0x4169e1, size: 0.55, dist: 18.5, speed: 0.004 }
         ];
-        
-        // Store planet meshes and their data
         const planetMeshes = [];
-        planetData.forEach((data, i) => {
-            if (data.special) {
-                // Earth already exists
-                const planet = earth;
-                planet.userData = { name: data.name, distance: data.distance, speed: data.speed, angle: Math.random() * Math.PI * 2 };
-                planetMeshes.push(planet);
-                // Add orbit line
-                const orbitPoints = [];
-                const radius = data.distance;
-                for (let ang = 0; ang <= 100; ang++) {
-                    const theta = (ang / 100) * Math.PI * 2;
-                    const x = Math.cos(theta) * radius;
-                    const z = Math.sin(theta) * radius;
-                    orbitPoints.push(new THREE.Vector3(x, 0, z));
-                }
-                const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
-                const orbitMat = new THREE.LineBasicMaterial({ color: 0x4488aa, transparent: true, opacity: 0.3 });
-                const orbitLine = new THREE.LineLoop(orbitGeo, orbitMat);
-                scene.add(orbitLine);
-            } else {
-                const planet = createPlanet(data.size, data.color, data.detail);
-                planet.userData = { name: data.name, distance: data.distance, speed: data.speed, angle: Math.random() * Math.PI * 2 };
-                scene.add(planet);
-                planetMeshes.push(planet);
-                // Orbit
-                const orbitPoints = [];
-                const radius = data.distance;
-                for (let ang = 0; ang <= 100; ang++) {
-                    const theta = (ang / 100) * Math.PI * 2;
-                    const x = Math.cos(theta) * radius;
-                    const z = Math.sin(theta) * radius;
-                    orbitPoints.push(new THREE.Vector3(x, 0, z));
-                }
-                const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
-                const orbitMat = new THREE.LineBasicMaterial({ color: 0x4488aa, transparent: true, opacity: 0.3 });
-                const orbitLine = new THREE.LineLoop(orbitGeo, orbitMat);
-                scene.add(orbitLine);
+        planetsData.forEach(p => {
+            const planet = new THREE.Mesh(new THREE.SphereGeometry(p.size, 64, 64), new THREE.MeshStandardMaterial({ color: p.color }));
+            planet.userData = { dist: p.dist, speed: p.speed, angle: Math.random() * Math.PI * 2 };
+            solarGroup.add(planet);
+            planetMeshes.push(planet);
+            // Orbit line
+            const orbitPoints = [];
+            for (let ang = 0; ang <= 100; ang++) {
+                const theta = (ang / 100) * Math.PI * 2;
+                const x = Math.cos(theta) * p.dist;
+                const z = Math.sin(theta) * p.dist;
+                orbitPoints.push(new THREE.Vector3(x, 0, z));
             }
+            const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMat = new THREE.LineBasicMaterial({ color: 0x4488aa, transparent: true, opacity: 0.2 });
+            const orbitLine = new THREE.LineLoop(orbitGeo, orbitMat);
+            solarGroup.add(orbitLine);
         });
+        // Earth (already in earthGroup) - we'll also add to solar system but keep it separate for scaling
+        const earthInSolar = earthGroup.clone();
+        earthInSolar.position.set(0,0,0);
+        earthInSolar.userData = { dist: 8.5, speed: 0.012, angle: 0 };
+        solarGroup.add(earthInSolar);
+        planetMeshes.push(earthInSolar);
         
         // Saturn's rings
-        const saturn = planetMeshes.find(p => p.userData?.name === "Saturn");
+        const saturn = planetMeshes.find(p => p.material?.color?.getHex() === 0xf0e2b6);
         if (saturn) {
-            const ringGeo = new THREE.TorusGeometry(2.2, 0.4, 64, 100);
-            const ringMat = new THREE.MeshStandardMaterial({ color: 0xc2b280, emissive: 0x442200, transparent: true, opacity: 0.8 });
+            const ringGeo = new THREE.TorusGeometry(1.1, 0.25, 32, 100);
+            const ringMat = new THREE.MeshStandardMaterial({ color: 0xc2b280, transparent: true });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             ring.rotation.x = Math.PI / 2;
             saturn.add(ring);
         }
         
-        // --- The Sun (light source and central object) ---
-        const sunGeometry = new THREE.SphereGeometry(3, 128, 128);
-        const sunMaterial = new THREE.MeshStandardMaterial({
-            color: 0xffaa44,
-            emissive: 0xff4422,
-            emissiveIntensity: 1.2,
-            roughness: 0.3
-        });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        scene.add(sun);
-        // Sun light source
-        const sunLightSource = new THREE.PointLight(0xffaa66, 1.5, 0, 2);
-        sunLightSource.position.set(0, 0, 0);
-        scene.add(sunLightSource);
-        
-        // --- Quantum Realm (tiny glowing particles near origin) ---
-        const quantumGroup = new THREE.Group();
-        const quantumParticleCount = 800;
-        const quantumGeo = new THREE.BufferGeometry();
-        const quantumPositions = new Float32Array(quantumParticleCount * 3);
-        for (let i = 0; i < quantumParticleCount; i++) {
-            quantumPositions[i*3] = (Math.random() - 0.5) * 2;
-            quantumPositions[i*3+1] = (Math.random() - 0.5) * 2;
-            quantumPositions[i*3+2] = (Math.random() - 0.5) * 2;
-        }
-        quantumGeo.setAttribute('position', new THREE.BufferAttribute(quantumPositions, 3));
-        const quantumMat = new THREE.PointsMaterial({ color: 0xff00ff, size: 0.02, transparent: true, blending: THREE.AdditiveBlending });
-        const quantumPoints = new THREE.Points(quantumGeo, quantumMat);
-        quantumGroup.add(quantumPoints);
-        
-        // Add a glowing core
-        const coreGlow = new THREE.Mesh(
-            new THREE.SphereGeometry(0.15, 32, 32),
-            new THREE.MeshBasicMaterial({ color: 0xff88ff, transparent: true, blending: THREE.AdditiveBlending })
-        );
-        quantumGroup.add(coreGlow);
-        scene.add(quantumGroup);
-        
-        // --- Galaxy background (spiral particle system) ---
-        const galaxyParticleCount = 8000;
-        const galaxyGeo = new THREE.BufferGeometry();
-        const galaxyPositions = new Float32Array(galaxyParticleCount * 3);
-        const galaxyColors = new Float32Array(galaxyParticleCount * 3);
-        for (let i = 0; i < galaxyParticleCount; i++) {
-            const radius = Math.pow(Math.random(), 1.2) * 120;
+        // Asteroid belt (particle ring)
+        const asteroidCount = 2000;
+        const asteroidGeo = new THREE.BufferGeometry();
+        const asteroidPos = [];
+        for (let i = 0; i < asteroidCount; i++) {
+            const r = 9 + Math.random() * 1.5;
             const angle = Math.random() * Math.PI * 2;
-            const y = (Math.random() - 0.5) * 20 * (1 - radius / 120);
-            galaxyPositions[i*3] = Math.cos(angle) * radius;
-            galaxyPositions[i*3+1] = y;
-            galaxyPositions[i*3+2] = Math.sin(angle) * radius;
-            const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.1, 0.9, 0.5);
-            galaxyColors[i*3] = color.r;
-            galaxyColors[i*3+1] = color.g;
-            galaxyColors[i*3+2] = color.b;
+            const y = (Math.random() - 0.5) * 0.8;
+            asteroidPos.push(Math.cos(angle) * r, y, Math.sin(angle) * r);
         }
-        galaxyGeo.setAttribute('position', new THREE.BufferAttribute(galaxyPositions, 3));
-        galaxyGeo.setAttribute('color', new THREE.BufferAttribute(galaxyColors, 3));
-        const galaxyMatPoints = new THREE.PointsMaterial({ size: 0.2, vertexColors: true, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
-        const galaxy = new THREE.Points(galaxyGeo, galaxyMatPoints);
-        scene.add(galaxy);
+        asteroidGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(asteroidPos), 3));
+        const asteroidMatPoints = new THREE.PointsMaterial({ color: 0xaa8866, size: 0.05 });
+        const asteroidField = new THREE.Points(asteroidGeo, asteroidMatPoints);
+        solarGroup.add(asteroidField);
         
-        // --- Universe bubble (cosmic web representation) ---
-        const universeGroup = new THREE.Group();
-        const webParticleCount = 5000;
+        scene.add(solarGroup);
+        
+        // ========== 6. BLACK HOLE (with accretion disk and gravitational lensing) ==========
+        const blackHoleGroup = new THREE.Group();
+        const eventHorizon = new THREE.Mesh(new THREE.SphereGeometry(1.2, 64, 64), new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x220000, roughness: 0.1 }));
+        blackHoleGroup.add(eventHorizon);
+        // Accretion disk (torus with glowing texture)
+        const diskGeo = new THREE.TorusGeometry(2.2, 0.4, 64, 200);
+        const diskMat = new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff4422, emissiveIntensity: 0.8 });
+        const accretionDisk = new THREE.Mesh(diskGeo, diskMat);
+        accretionDisk.rotation.x = Math.PI / 2.5;
+        blackHoleGroup.add(accretionDisk);
+        // Gravitational lensing effect (distorted sphere)
+        const lensGeo = new THREE.SphereGeometry(1.8, 64, 64);
+        const lensMat = new THREE.MeshBasicMaterial({ color: 0x88aaff, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
+        const lensField = new THREE.Mesh(lensGeo, lensMat);
+        blackHoleGroup.add(lensField);
+        scene.add(blackHoleGroup);
+        
+        // ========== 7. GALAXY (spiral particles) ==========
+        const galaxyGroup = new THREE.Group();
+        const galCount = 15000;
+        const galGeo = new THREE.BufferGeometry();
+        const galPositions = [];
+        const galColors = [];
+        for (let i = 0; i < galCount; i++) {
+            const radius = Math.pow(Math.random(), 1.2) * 35;
+            const angle = Math.random() * Math.PI * 2;
+            const y = (Math.random() - 0.5) * 5 * (1 - radius / 35);
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            galPositions.push(x, y, z);
+            const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.1, 0.8, 0.5);
+            galColors.push(color.r, color.g, color.b);
+        }
+        galGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(galPositions), 3));
+        galGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(galColors), 3));
+        const galMatPoints = new THREE.PointsMaterial({ size: 0.08, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending });
+        const galaxyPoints = new THREE.Points(galGeo, galMatPoints);
+        galaxyGroup.add(galaxyPoints);
+        scene.add(galaxyGroup);
+        
+        // ========== 8. COSMIC WEB (filaments) ==========
+        const cosmicGroup = new THREE.Group();
+        const webCount = 4000;
         const webGeo = new THREE.BufferGeometry();
-        const webPositions = new Float32Array(webParticleCount * 3);
-        for (let i = 0; i < webParticleCount; i++) {
-            webPositions[i*3] = (Math.random() - 0.5) * 400;
-            webPositions[i*3+1] = (Math.random() - 0.5) * 300;
-            webPositions[i*3+2] = (Math.random() - 0.5) * 400;
+        const webPos = [];
+        for (let i = 0; i < webCount; i++) {
+            // filament-like clusters
+            const cluster = Math.random() > 0.7;
+            if (cluster) {
+                const cx = (Math.random() - 0.5) * 80;
+                const cy = (Math.random() - 0.5) * 50;
+                const cz = (Math.random() - 0.5) * 80;
+                for (let j = 0; j < 20; j++) {
+                    webPos.push(cx + (Math.random() - 0.5) * 8, cy + (Math.random() - 0.5) * 8, cz + (Math.random() - 0.5) * 8);
+                }
+            } else {
+                webPos.push((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 120, (Math.random() - 0.5) * 200);
+            }
         }
-        webGeo.setAttribute('position', new THREE.BufferAttribute(webPositions, 3));
-        const webMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.15, transparent: true, opacity: 0.3 });
-        const webPoints = new THREE.Points(webGeo, webMat);
-        universeGroup.add(webPoints);
-        scene.add(universeGroup);
+        webGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(webPos), 3));
+        const webMatPoints = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.1, transparent: true, opacity: 0.4 });
+        const cosmicWeb = new THREE.Points(webGeo, webMatPoints);
+        cosmicGroup.add(cosmicWeb);
+        scene.add(cosmicGroup);
         
-        // --- Scale Management (zoom levels: 0=Quantum, 1=Human, 2=Earth, 3=Solar, 4=Galaxy, 5=Universe) ---
-        let currentScaleIndex = 0; // Start at quantum
-        let targetScaleIndex = 0;
-        const scalePositions = [
-            { camDist: 1.2, target: [0,0,0], name: "Planck Length", details: "1.6×10⁻³⁵ m | Quantum foam" },
-            { camDist: 3.5, target: [0,0,0], name: "Human Scale", details: "1.7 meters | You are here" },
-            { camDist: 8, target: [0,0,0], name: "Earth", details: "12,742 km diameter | Our home" },
-            { camDist: 25, target: [0,0,0], name: "Solar System", details: "Planets orbiting the Sun" },
-            { camDist: 80, target: [0,0,0], name: "Milky Way Galaxy", details: "100,000 light-years across" },
-            { camDist: 250, target: [0,0,0], name: "Observable Universe", details: "93 billion light-years" }
+        // ========== Scale management (logarithmic zoom) ==========
+        const scaleStages = [
+            { name: "Planck Scale", cat: "⚛️ QUANTUM REALM", detail: "Quantum foam | 10⁻³⁵ m", group: quantumGroup, camDist: 1.2, target: [0,0,0] },
+            { name: "Hydrogen Atom", cat: "🧬 ATOMIC", detail: "Electron cloud | 10⁻¹⁰ m", group: atomGroup, camDist: 2.5, target: [0,0,0] },
+            { name: "Human DNA", cat: "👤 HUMAN SCALE", detail: "Double helix | 2 nm", group: humanGroup, camDist: 3.8, target: [0,0,0] },
+            { name: "Earth", cat: "🌍 PLANETARY", detail: "Atmosphere | Magnetic field", group: earthGroup, camDist: 8, target: [0,0,0] },
+            { name: "Solar System", cat: "☀️ STELLAR", detail: "Sun & planets", group: solarGroup, camDist: 25, target: [0,0,0] },
+            { name: "Black Hole", cat: "🕳️ RELATIVITY", detail: "Event horizon | Accretion disk", group: blackHoleGroup, camDist: 12, target: [0,0,0] },
+            { name: "Milky Way", cat: "🌀 GALACTIC", detail: "100k ly across | Dark matter halo", group: galaxyGroup, camDist: 70, target: [0,0,0] },
+            { name: "Cosmic Web", cat: "🌌 UNIVERSE", detail: "Filaments & voids", group: cosmicGroup, camDist: 180, target: [0,0,0] }
         ];
         
+        let currentScale = 0;
+        let targetScale = 0;
+        let timeSpeed = 0.5;
+        document.getElementById('timeSpeed').addEventListener('input', (e) => timeSpeed = parseFloat(e.target.value));
+        
         function updateScale() {
-            // Smooth interpolation
-            currentScaleIndex += (targetScaleIndex - currentScaleIndex) * 0.05;
-            const idx = Math.floor(currentScaleIndex);
-            const blend = currentScaleIndex - idx;
-            const pos1 = scalePositions[Math.min(idx, scalePositions.length-1)];
-            const pos2 = scalePositions[Math.min(idx+1, scalePositions.length-1)];
+            currentScale += (targetScale - currentScale) * 0.07;
+            const idx = Math.floor(currentScale);
+            const blend = currentScale - idx;
+            const stage = scaleStages[Math.min(idx, scaleStages.length-1)];
+            const next = scaleStages[Math.min(idx+1, scaleStages.length-1)];
             
             let camDist, targetPos;
-            if (pos2 && blend > 0) {
-                camDist = pos1.camDist + (pos2.camDist - pos1.camDist) * blend;
-                targetPos = new THREE.Vector3(
-                    pos1.target[0] + (pos2.target[0] - pos1.target[0]) * blend,
-                    pos1.target[1] + (pos2.target[1] - pos1.target[1]) * blend,
-                    pos1.target[2] + (pos2.target[2] - pos1.target[2]) * blend
-                );
+            if (next && blend > 0) {
+                camDist = stage.camDist + (next.camDist - stage.camDist) * blend;
+                targetPos = [
+                    stage.target[0] + (next.target[0] - stage.target[0]) * blend,
+                    stage.target[1] + (next.target[1] - stage.target[1]) * blend,
+                    stage.target[2] + (next.target[2] - stage.target[2]) * blend
+                ];
             } else {
-                camDist = pos1.camDist;
-                targetPos = new THREE.Vector3(pos1.target[0], pos1.target[1], pos1.target[2]);
+                camDist = stage.camDist;
+                targetPos = stage.target;
             }
-            
-            // Update camera
-            const newCamPos = new THREE.Vector3(0, 2, camDist);
-            camera.position.lerp(newCamPos, 0.05);
-            controls.target.lerp(targetPos, 0.05);
+            // Smooth camera
+            const newPos = new THREE.Vector3(0, 2, camDist);
+            camera.position.lerp(newPos, 0.05);
+            controls.target.lerp(new THREE.Vector3(targetPos[0], targetPos[1], targetPos[2]), 0.05);
             controls.update();
             
             // Update UI
-            let displayIdx = Math.round(currentScaleIndex);
-            displayIdx = Math.min(scalePositions.length-1, Math.max(0, displayIdx));
-            const info = scalePositions[displayIdx];
-            document.getElementById('objName').innerText = info.name;
-            document.getElementById('objDetails').innerText = info.details;
+            let displayIdx = Math.round(currentScale);
+            displayIdx = Math.min(scaleStages.length-1, Math.max(0, displayIdx));
+            const info = scaleStages[displayIdx];
+            document.getElementById('category').innerHTML = info.cat;
+            document.getElementById('name').innerHTML = info.name;
+            document.getElementById('detail').innerHTML = info.detail;
             
-            // Show/hide objects based on scale
-            const showQuantum = currentScaleIndex < 0.5;
-            const showHuman = currentScaleIndex > 0.3 && currentScaleIndex < 1.2;
-            const showEarth = currentScaleIndex > 0.8 && currentScaleIndex < 2.5;
-            const showSolar = currentScaleIndex > 1.5;
-            const showGalaxy = currentScaleIndex > 2.5;
-            const showUniverse = currentScaleIndex > 3.5;
-            
-            quantumGroup.visible = showQuantum;
-            earth.visible = showEarth;
-            planetMeshes.forEach(p => { if (p !== earth) p.visible = showSolar; });
-            sun.visible = showSolar;
-            galaxy.visible = showGalaxy;
-            universeGroup.visible = showUniverse;
+            // Show/hide groups (only the active one plus some background)
+            scaleStages.forEach((s, i) => {
+                const dist = Math.abs(currentScale - i);
+                s.group.visible = dist < 1.2;
+            });
+            // Always show stars
             stars.visible = true;
         }
         
-        // --- Zoom controls ---
-        function setScale(index) {
-            targetScaleIndex = Math.min(scalePositions.length-1, Math.max(0, index));
-        }
-        document.getElementById('btnQuantum').addEventListener('click', () => setScale(0));
-        document.getElementById('btnHuman').addEventListener('click', () => setScale(1));
-        document.getElementById('btnEarth').addEventListener('click', () => setScale(2));
-        document.getElementById('btnSolar').addEventListener('click', () => setScale(3));
-        document.getElementById('btnGalaxy').addEventListener('click', () => setScale(4));
-        document.getElementById('btnUniverse').addEventListener('click', () => setScale(5));
+        // Buttons
+        document.getElementById('btnQuantum').onclick = () => targetScale = 0;
+        document.getElementById('btnAtom').onclick = () => targetScale = 1;
+        document.getElementById('btnHuman').onclick = () => targetScale = 2;
+        document.getElementById('btnEarth').onclick = () => targetScale = 3;
+        document.getElementById('btnSolar').onclick = () => targetScale = 4;
+        document.getElementById('btnBlackHole').onclick = () => targetScale = 5;
+        document.getElementById('btnGalaxy').onclick = () => targetScale = 6;
+        document.getElementById('btnUniverse').onclick = () => targetScale = 7;
         
         // Scroll wheel
         window.addEventListener('wheel', (e) => {
             e.preventDefault();
-            if (e.deltaY > 0) targetScaleIndex = Math.min(5, targetScaleIndex + 0.08);
-            else targetScaleIndex = Math.max(0, targetScaleIndex - 0.08);
+            const delta = e.deltaY > 0 ? 0.08 : -0.08;
+            targetScale = Math.min(scaleStages.length-1, Math.max(0, targetScale + delta));
         }, { passive: false });
         
         // Touch support
-        let touchStart = 0;
-        window.addEventListener('touchstart', (e) => { touchStart = e.touches[0].clientY; });
+        let touchY = 0;
+        window.addEventListener('touchstart', (e) => touchY = e.touches[0].clientY);
         window.addEventListener('touchmove', (e) => {
-            const delta = (touchStart - e.touches[0].clientY) * 0.005;
-            targetScaleIndex = Math.min(5, Math.max(0, targetScaleIndex + delta));
-            touchStart = e.touches[0].clientY;
+            const delta = (touchY - e.touches[0].clientY) * 0.005;
+            targetScale = Math.min(scaleStages.length-1, Math.max(0, targetScale + delta));
+            touchY = e.touches[0].clientY;
         });
         
-        // --- Animation loop: update planet positions, rotations, etc. ---
+        // Starfield background
+        const starCountBg = 5000;
+        const starBgGeo = new THREE.BufferGeometry();
+        const starBgPos = [];
+        for (let i = 0; i < starCountBg; i++) {
+            starBgPos.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 1200, (Math.random() - 0.5) * 800 - 400);
+        }
+        starBgGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starBgPos), 3));
+        const starBgMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true });
+        const stars = new THREE.Points(starBgGeo, starBgMat);
+        scene.add(stars);
+        
+        // Animation loop
         let time = 0;
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.016;
+            time += 0.016 * timeSpeed;
             
-            // Update planet positions
-            planetMeshes.forEach(planet => {
-                if (planet.userData && planet.userData.distance) {
-                    planet.userData.angle += planet.userData.speed;
-                    const x = Math.cos(planet.userData.angle) * planet.userData.distance;
-                    const z = Math.sin(planet.userData.angle) * planet.userData.distance;
-                    planet.position.set(x, 0, z);
+            // Animate quantum foam
+            quantumGroup.rotation.y = time * 2;
+            quantumGroup.rotation.x = Math.sin(time * 3) * 0.2;
+            quantumCore.scale.setScalar(1 + Math.sin(time * 20) * 0.1);
+            
+            // Electron orbit (probabilistic)
+            const angle = time * 5;
+            electronOrb.position.set(Math.cos(angle) * 0.7, Math.sin(angle * 1.3) * 0.5, Math.sin(angle) * 0.7);
+            
+            // Rotate Earth and clouds
+            earthMesh.rotation.y += 0.005;
+            cloudsMesh.rotation.y += 0.007;
+            
+            // Planets movement
+            planetMeshes.forEach(p => {
+                if (p.userData.dist) {
+                    p.userData.angle += p.userData.speed * timeSpeed;
+                    const x = Math.cos(p.userData.angle) * p.userData.dist;
+                    const z = Math.sin(p.userData.angle) * p.userData.dist;
+                    p.position.set(x, 0, z);
                 }
-                planet.rotation.y += 0.01;
+                if (p !== earthInSolar && p !== earthGroup) p.rotation.y += 0.01;
             });
-            earth.rotation.y += 0.005;
-            clouds.rotation.y += 0.007;
-            sun.rotation.y += 0.002;
+            earthInSolar.rotation.y += 0.005;
             
-            // Rotate galaxy and quantum particles
-            galaxy.rotation.y += 0.0005;
-            galaxy.rotation.x = Math.sin(time * 0.05) * 0.05;
-            quantumGroup.rotation.y += 0.01;
-            quantumGroup.rotation.x = Math.sin(time * 2) * 0.1;
-            universeGroup.rotation.y -= 0.0002;
+            // Black hole accretion disk rotation
+            accretionDisk.rotation.z += 0.02;
+            accretionDisk.rotation.y += 0.01;
+            lensField.rotation.y += 0.005;
+            
+            // Galaxy rotation
+            galaxyGroup.rotation.y += 0.0005;
+            galaxyGroup.rotation.x = Math.sin(time * 0.05) * 0.1;
+            
+            // Cosmic web drift
+            cosmicGroup.rotation.y -= 0.0002;
             
             updateScale();
             effectComposer.render();
@@ -500,7 +552,7 @@
             effectComposer.setSize(window.innerWidth, window.innerHeight);
         });
         
-        console.log('✨ Universe ready | Drag to explore | Scroll through scales');
+        console.log('✨ Universe Engine active | Quantum foam to Cosmic web | Black hole lensing | Full detail');
     </script>
 </body>
 </html>
